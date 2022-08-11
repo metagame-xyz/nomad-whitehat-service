@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { isValidEventForwarderSignature } from '@utils';
 import { addOrUpdateNft } from '@utils/addOrUpdateNft';
 import { LogData, logError, logSuccess } from '@utils/logging';
-import { addressMap } from '@utils/testAddresses';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     console.log('tokenId:', req.query.tokenId);
@@ -29,10 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         token_id: tokenId,
         wallet_address: address,
     };
-
-    if (process.env.VERCEL_ENV !== 'production') {
-        address = addressMap[tokenId.toString()];
-    }
 
     try {
         const result = await addOrUpdateNft(address, tokenId, true);

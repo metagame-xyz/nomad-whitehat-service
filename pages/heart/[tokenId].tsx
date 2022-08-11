@@ -3,8 +3,6 @@ import { Box, Button } from '@chakra-ui/react';
 import { InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 
-import Heart from '@components/heart';
-
 import { ioredisClient } from '@utils';
 import { CONTRACT_ADDRESS } from '@utils/constants';
 import { clickableIPFSLink } from '@utils/frontend';
@@ -72,12 +70,7 @@ function HeartPage({
                 <meta name="twitter:image" content={clickableIPFSLink(metadata.image)} />
                 <meta name="twitter:image:alt" content={metadata.name} />
             </Head>
-            <Box w={size} h={size} maxW="800px" maxH="800px">
-                <Heart
-                    address={metadata.address}
-                    attributes={getParametersFromTxnCounts(metadata.txnCounts)}
-                />
-            </Box>
+            <Box w={size} h={size} maxW="800px" maxH="800px"></Box>
             <Box>
                 <Button
                     colorScheme="brand"

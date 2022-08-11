@@ -31,7 +31,8 @@ function Navbar(props) {
                 justify="center"
                 align="center"
                 p={4}
-                {...props}>
+                {...props}
+            >
                 <HStack align="center" spacing={2} pr={[0, 2]}>
                     <Logo boxSize={10} />
                     {showName && (
@@ -61,7 +62,8 @@ function Navbar(props) {
                             size="lg"
                             boxShadow="lg"
                             fontSize="2xl"
-                            borderRadius="full">
+                            borderRadius="full"
+                        >
                             Connect
                         </Button>
                     )}

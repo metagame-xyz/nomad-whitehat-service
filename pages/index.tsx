@@ -18,7 +18,6 @@ import { debug, event } from '@utils/frontend';
 import { Metadata } from '@utils/metadata';
 import { getParametersFromTxnCounts } from '@utils/parameters';
 
-import Heart from '../components/heart/index.jsx';
 import heartbeat from '../heartbeat.json';
 
 export const getServerSideProps = async () => {
@@ -202,12 +201,7 @@ function Home({ metadata }) {
                         aspectRatio: '1/1',
                         width: '80%',
                         maxWidth: '800px',
-                    }}>
-                    <Heart
-                        address={metadata.address}
-                        attributes={getParametersFromTxnCounts(metadata.txnCounts)}
-                    />
-                </div>
+                    }}></div>
             </Box>
 
             <Box px={8} py={8} width="fit-content" margin="auto" maxW={maxW}>

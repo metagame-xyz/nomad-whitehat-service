@@ -15,7 +15,8 @@ export default function Footer(props) {
                 gap={1}
                 templateColumns="repeat(3, 1fr)"
                 color="brand.50"
-                {...props}>
+                {...props}
+            >
                 <Flex align="center">
                     <Text fontSize="sm">
                         {`code & art by `}
@@ -32,7 +33,8 @@ export default function Footer(props) {
                     direction={['column', 'column', 'row']}
                     spacing={2}
                     align="center"
-                    justify="center">
+                    justify="center"
+                >
                     <TwelveCircles boxSize={8} color="white" />
                     {/* pt=1 cuz this font sits too high */}
                     <Center fontFamily="courier prime" pt={1} fontSize={['sm', 'md', 'xl', 'xl']}>
@@ -44,7 +46,8 @@ export default function Footer(props) {
                     spacing={2}
                     align="center"
                     justify="flex-end"
-                    color="brand.100">
+                    color="brand.100"
+                >
                     <Twitter boxSize={[6, 8]} _hover={hover} boxShadow={''} />
                     <Opensea boxSize={[6, 8]} _hover={hover} boxShadow={''} />
                     <Etherscan boxSize={[6, 8]} _hover={hover} boxShadow={''} />
