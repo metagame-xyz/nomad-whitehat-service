@@ -1,18 +1,32 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Button, Heading, Link, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import { datadogRum } from '@datadog/browser-rum';
 import { parseEther } from '@ethersproject/units';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import axios from 'axios';
 import { getGPUTier } from 'detect-gpu';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, ethers } from 'ethers';
+import { AddressZ } from 'evm-translator/lib/interfaces/utils';
 import Head from 'next/head';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import nomadWhitehatAbi from 'utils/nomadWhitehatAbi';
+import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagmi';
 
 import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
+import CustomConnectButton from '@components/ConnectButton';
 import { maxW } from '@components/Layout';
+import MintButton, { MintStatus } from '@components/MintButton';
 
 import { ioredisClient } from '@utils';
-import { blackholeAddress, CONTRACT_ADDRESS, networkStrings, WEBSITE_URL } from '@utils/constants';
+import {
+    blackholeAddress,
+    CONTRACT_ADDRESS,
+    METABOT_BASE_API_URL,
+    networkStrings,
+    WEBSITE_URL,
+} from '@utils/constants';
 import { copy } from '@utils/content';
 import { debug, event } from '@utils/frontend';
 import { Metadata } from '@utils/metadata';
@@ -54,19 +68,37 @@ function heartbeatShowerLink(tokenId: number): string {
     return `https://${WEBSITE_URL}/heart/${tokenId}`;
 }
 
-function Home({ metadata }) {
-    const { provider, signer, userAddress, userName, eventParams, openWeb3Modal, toast } =
-        useEthereum();
+const Home = ({ metadata }) => {
+    const { userName, eventParams, openWeb3Modal, toast } = useEthereum();
+    const {
+        address: uncleanAddress,
+        isConnecting,
+        isDisconnected,
+    } = useAccount({ onDisconnect: datadogRum.removeUser });
+    const { chain } = useNetwork();
 
-    console.log(metadata);
-
-    const heartbeatContract = new Contract(CONTRACT_ADDRESS, heartbeat.abi, provider);
+    const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
     let [minted, setMinted] = useState(false);
     let [minting, setMinting] = useState(false);
-    let [userTokenId, setUserTokenId] = useState<number>(null);
 
     let [mintCount, setMintCount] = useState<number>(null);
+
+    const provider = useProvider();
+
+    const { data: signer } = useSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, nomadWhitehatAbi, provider);
+    const contractWithSigner = contract.connect(signer);
+
+    const [expandedSignature, setExpandedSignature] = useState({ v: null, r: null, s: null });
+    const [contentContainer, setContentContainer] = useState<HTMLElement | null>(null);
+    const [mintStatus, setMintStatus] = useState<MintStatus>(MintStatus.unknown);
+
+    const [userTokenId, setUserTokenId] = useState<number>(null);
+
+    const [showMetabotModal, setShowMetabotModal] = useState(false);
+    const [showProcessingModal, setShowProcessingModal] = useState(false);
+    const [showMintedModal, setShowMintedModal] = useState(false);
 
     let [hasGPU, setHasGPU] = useState<boolean>(true);
 
@@ -74,78 +106,114 @@ function Home({ metadata }) {
         async function getUserMintedTokenId() {
             // userAddress has changed. TokenId defaults to null
             let tokenId = null;
+            let allowlist = false;
+            let signature = { v: null, r: null, s: null };
+            let errorCode = null;
+            let localMintStatus = MintStatus.loading;
+            setMintStatus(localMintStatus);
+
             try {
-                if (userAddress) {
-                    const filter = heartbeatContract.filters.Transfer(
-                        blackholeAddress,
-                        userAddress,
-                    );
-                    const [event] = await heartbeatContract.queryFilter(filter); // get first event, should only be one
+                if (address) {
+                    console.log('address', address);
+                    const filter = contract.filters.Transfer(blackholeAddress, address);
+                    const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     if (event) {
                         tokenId = event.args[2].toNumber();
+                        localMintStatus = MintStatus.minted;
                     }
                 }
+
+                if (address && localMintStatus !== MintStatus.minted) {
+                    axios
+                        .get(
+                            `${METABOT_BASE_API_URL}nomadWhitehatCheck/0xa66745f0092f7460f107e4c66c224553bf4cd727`,
+                        )
+                        .then(({ data }) => {
+                            localMintStatus = MintStatus.can_mint;
+                        })
+                        .catch(({ response }) => {
+                            console.log(response.data, response.data.errorCode);
+                            const { errorCode } = response?.data;
+                            if (errorCode === 1) {
+                                console.log('GET OUTTA HERE');
+                                localMintStatus = MintStatus.not_whitehat;
+                                setShowMetabotModal(true);
+                            } else if (errorCode === 2) {
+                                localMintStatus = MintStatus.processing;
+                                setShowProcessingModal(true);
+                            }
+                        })
+                        .finally(() => {
+                            setMintStatus(localMintStatus);
+                        });
+                }
+
+                if (!address) {
+                    localMintStatus = MintStatus.unknown;
+                }
+
+                console.log('tokenId', tokenId);
             } catch (error) {
-                toast(toastErrorData('Get User Minted Token Error', JSON.stringify(error)));
-                debug({ error });
+                console.error(error);
+                // toast(toastErrorData('Get User Minted Token Error', JSON.stringify(error)))
             } finally {
-                // set it either to null, or to the userAddres's tokenId
                 setUserTokenId(tokenId);
+                setExpandedSignature(signature);
+                setMintStatus(localMintStatus);
             }
         }
         getUserMintedTokenId();
-    }, [userAddress]);
+    }, [address, chain?.id]);
 
     // Mint Count
-    useEffect(() => {
-        async function getMintedCount() {
-            try {
-                console.log('getting mint count');
-                const mintCount: BigNumber = await heartbeatContract.mintedCount();
-                setMintCount(mintCount.toNumber());
-            } catch (error) {
-                debug({ error });
-            }
-        }
-        const interval = setInterval(getMintedCount, 4000);
-        return () => clearInterval(interval);
-    }, []);
+    // useEffect(() => {
+    //     async function getMintedCount() {
+    //         try {
+    //             console.log('getting mint count');
+    //             const mintCount: BigNumber = await heartbeatContract.mintedCount();
+    //             setMintCount(mintCount.toNumber());
+    //         } catch (error) {
+    //             debug({ error });
+    //         }
+    //     }
+    //     const interval = setInterval(getMintedCount, 4000);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     const mint = async () => {
-        event('Mint Button Clicked', eventParams);
-        const network = await provider.getNetwork();
-        if (network.name != networkStrings.ethers) {
-            event('Mint Attempt on Wrong Network', eventParams);
-            toast(wrongNetworkToast);
-            return;
-        }
+        // const provider = new ethers.providers.Web3Provider(provider)
+        // const signer = provider.getSigner()
+        const previousMintStatus = mintStatus;
+        setMintStatus(MintStatus.minting);
 
-        setMinting(true);
-        const heartbeatContractWritable = heartbeatContract.connect(signer);
-        const value = parseEther('0.01');
         try {
-            const data = await heartbeatContractWritable.mint({ value });
-            const moreData = await data.wait();
-            const [fromAddress, toAddress, tokenId] = moreData.events.find(
+            const tx = await contractWithSigner.mintWithSignature(
+                address,
+                expandedSignature.v,
+                expandedSignature.r,
+                expandedSignature.s,
+                {
+                    value: parseEther('0.02'),
+                },
+            );
+            const txReceipt = await tx.wait();
+            const [fromAddress, toAddress, tokenId] = txReceipt.events.find(
                 (e) => (e.event = 'Transfer'),
-            ).args;
-            setUserTokenId(tokenId.toNumber());
-            setMinting(false);
-            setMinted(true);
-            event('Mint Success', eventParams);
-        } catch (error) {
-            // const { reason, code, error, method, transaction } = error
-            setMinting(false);
+            ).args as [string, string, BigNumber];
 
-            if (error?.error?.message) {
-                const eventParamsWithError = {
-                    ...eventParams,
-                    errorMessage: error.error.message,
-                    errorReason: error.reason,
-                };
-                event('Mint Error', eventParamsWithError);
-                toast(toastErrorData(error.reason, error.error.message));
-            }
+            datadogRum.addAction('mint success', {
+                txHash: tx.hash,
+                tokenId: tokenId.toString(),
+            });
+
+            console.log('Transaction:', tx.hash);
+
+            setUserTokenId(tokenId.toNumber());
+            setMintStatus(MintStatus.minted);
+            setShowMintedModal(true);
+        } catch (error) {
+            console.error(error);
+            setMintStatus(previousMintStatus);
         }
     };
 
@@ -185,6 +253,29 @@ function Home({ metadata }) {
             );
         }
     };
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    let mintButtonAction = () => {};
+    switch (mintStatus) {
+        case MintStatus.can_mint:
+            mintButtonAction = () => mint();
+            break;
+        case MintStatus.processing:
+            mintButtonAction = () => setShowProcessingModal(true);
+            break;
+        case MintStatus.minted:
+            mintButtonAction = () => {
+                window.open(`/logbook/${userTokenId}`, '_blank');
+            };
+        case MintStatus.unknown:
+        default:
+            break;
+    }
+
+    const clickable = [MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(
+        mintStatus,
+    );
+    console.log('user address', address);
     return (
         <Box align="center">
             <Head>
@@ -203,57 +294,21 @@ function Home({ metadata }) {
                         width: '80%',
                         maxWidth: '800px',
                     }}>
-                    <Heart
+                    {/* <Heart
                         address={metadata.address}
                         attributes={getParametersFromTxnCounts(metadata.txnCounts)}
-                    />
+                    /> */}
                 </div>
             </Box>
 
-            <Box px={8} py={8} width="fit-content" margin="auto" maxW={maxW}>
-                <SimpleGrid columns={[1, 1, 1, 3]} align="center" spacing={16}>
-                    <About heading={copy.heading1} text={copy.text1} />
-                    <About heading={copy.heading2} text={copy.text2} />
-                    <About heading={copy.heading3} text={copy.text3} />
-                </SimpleGrid>
-            </Box>
-
             <VStack justifyContent="center" spacing={4} px={4} py={8} bgColor="brand.700">
-                {!minted && !userTokenId ? (
-                    <Button
-                        onClick={userAddress ? mint : () => openWeb3Modal('Main Page Section')}
-                        isLoading={minting}
-                        loadingText="Minting..."
-                        isDisabled={minted}
-                        fontWeight="normal"
-                        colorScheme="brand"
-                        bgColor="brand.600"
-                        // color="brand.900"
-                        _hover={{ bg: 'brand.500' }}
-                        size="lg"
-                        height="60px"
-                        minW="xs"
-                        boxShadow="lg"
-                        fontSize="4xl"
-                        borderRadius="full">
-                        {userAddress ? mintText() : 'Connect Wallet'}
-                    </Button>
-                ) : (
-                    <Box fontSize={[24, 24, 36]} color="white">
-                        <Text>{`${userName}'s ${copy.title} (#${userTokenId}) has been minted.`}</Text>
-                        <Button
-                            colorScheme="brand"
-                            color="white"
-                            variant="outline"
-                            _hover={{ bgColor: 'brand.600' }}
-                            _active={{ bgColor: 'brand.500' }}
-                            mt={2}
-                            size="lg"
-                            rightIcon={<ExternalLinkIcon />}
-                            onClick={() => window.open(heartbeatShowerLink(userTokenId))}>
-                            View your Heartbeat
-                        </Button>
-                    </Box>
+                {!address ? <ConnectButton /> : null}
+                {mintStatus !== MintStatus.unknown && (
+                    <MintButton
+                        mintStatus={mintStatus}
+                        clickable={clickable}
+                        action={mintButtonAction}
+                    />
                 )}
                 {textUnderButton()}
             </VStack>
@@ -270,6 +325,6 @@ function Home({ metadata }) {
             </Box>
         </Box>
     );
-}
+};
 
 export default Home;
