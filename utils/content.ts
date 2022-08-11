@@ -7,7 +7,7 @@ export interface MetaProps {
     type?: string;
 }
 
-const description = 'A beating heart based on your on-chain activity';
+const description = 'An NFT only mintable by the real ones';
 
 export const headMetadata: MetaProps = {
     title: 'Heartbeat',
@@ -17,7 +17,7 @@ export const headMetadata: MetaProps = {
 };
 
 export const copy = {
-    title: 'Heartbeat',
+    title: 'Welcome, whitehats',
     nameLowercase: 'heartbeat',
     heroSubheading: description,
     heading1: 'Living, Breathing',

@@ -114,7 +114,6 @@ const Home = ({ metadata }) => {
 
             try {
                 if (address) {
-                    console.log('address', address);
                     const filter = contract.filters.Transfer(blackholeAddress, address);
                     const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     if (event) {
@@ -125,11 +124,10 @@ const Home = ({ metadata }) => {
 
                 if (address && localMintStatus !== MintStatus.minted) {
                     axios
-                        .get(
-                            `${METABOT_BASE_API_URL}nomadWhitehatCheck/0xa66745f0092f7460f107e4c66c224553bf4cd727`,
-                        )
+                        .get(`${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`)
                         .then(({ data }) => {
                             localMintStatus = MintStatus.can_mint;
+                            setExpandedSignature(data.signature);
                         })
                         .catch(({ response }) => {
                             console.log(response.data, response.data.errorCode);
@@ -151,14 +149,11 @@ const Home = ({ metadata }) => {
                 if (!address) {
                     localMintStatus = MintStatus.unknown;
                 }
-
-                console.log('tokenId', tokenId);
             } catch (error) {
                 console.error(error);
                 // toast(toastErrorData('Get User Minted Token Error', JSON.stringify(error)))
             } finally {
                 setUserTokenId(tokenId);
-                setExpandedSignature(signature);
                 setMintStatus(localMintStatus);
             }
         }
@@ -183,23 +178,27 @@ const Home = ({ metadata }) => {
     const mint = async () => {
         // const provider = new ethers.providers.Web3Provider(provider)
         // const signer = provider.getSigner()
+        console.log('revvvvrevvv');
         const previousMintStatus = mintStatus;
         setMintStatus(MintStatus.minting);
 
         try {
-            const tx = await contractWithSigner.mintWithSignature(
+            console.log('here we go');
+            const tx = await contractWithSigner.callStatic.mintWithSignature(
                 address,
                 expandedSignature.v,
                 expandedSignature.r,
                 expandedSignature.s,
                 {
-                    value: parseEther('0.02'),
+                    value: parseEther('0.00'),
                 },
             );
+            console.log('did it :)');
             const txReceipt = await tx.wait();
             const [fromAddress, toAddress, tokenId] = txReceipt.events.find(
                 (e) => (e.event = 'Transfer'),
             ).args as [string, string, BigNumber];
+            console.log('if youre reading this its too late');
 
             datadogRum.addAction('mint success', {
                 txHash: tx.hash,
@@ -275,7 +274,6 @@ const Home = ({ metadata }) => {
     const clickable = [MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(
         mintStatus,
     );
-    console.log('user address', address);
     return (
         <Box align="center">
             <Head>
@@ -290,7 +288,7 @@ const Home = ({ metadata }) => {
                 </Text>
                 <div
                     style={{
-                        aspectRatio: '1/1',
+                        aspectRatio: '2/1',
                         width: '80%',
                         maxWidth: '800px',
                     }}>

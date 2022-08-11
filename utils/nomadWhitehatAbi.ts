@@ -18,11 +18,6 @@ const nomadWhitehatAbi = [
             },
             {
                 internalType: 'uint256',
-                name: '_freeMints',
-                type: 'uint256',
-            },
-            {
-                internalType: 'uint256',
                 name: '_mintsPerAddress',
                 type: 'uint256',
             },
@@ -191,19 +186,6 @@ const nomadWhitehatAbi = [
     },
     {
         inputs: [],
-        name: 'freeMints',
-        outputs: [
-            {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
-        inputs: [],
         name: 'getAddress',
         outputs: [
             {
@@ -261,19 +243,6 @@ const nomadWhitehatAbi = [
             },
         ],
         name: 'isApprovedForAll',
-        outputs: [
-            {
-                internalType: 'bool',
-                name: '',
-                type: 'bool',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
-        inputs: [],
-        name: 'isMintFree',
         outputs: [
             {
                 internalType: 'bool',
