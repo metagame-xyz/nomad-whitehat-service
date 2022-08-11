@@ -241,7 +241,7 @@ const Home = ({ metadata }) => {
             return (
                 <div>
                     <Text fontWeight="light" fontSize={['xl', '2xl']} color="white">
-                        0.01 ETH to mint
+                        Free to mint
                     </Text>
                     {mintCount && (
                         <Text fontWeight="light" fontSize={['sm', 'md']} color="white">
