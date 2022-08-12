@@ -3,12 +3,13 @@ import {
     Box,
     Button,
     Flex,
-    Heading,
     HStack,
+    Link,
     Spacer,
     Text,
     useBreakpointValue,
 } from '@chakra-ui/react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
 
 import { useEthereum } from '@providers/EthereumProvider';
@@ -17,56 +18,37 @@ import { Etherscan, Logo, Opensea, Twitter } from '@components/Icons';
 
 import { copy } from '@utils/content';
 
+import CustomConnectButton from './ConnectButton';
+
 function Navbar(props) {
     const { userName, openWeb3Modal, avatarUrl } = useEthereum();
 
     const showName = useBreakpointValue({ base: false, md: true });
 
     return (
-        <Flex width="100%" bgColor="transparent" boxShadow="md">
+        <Flex width="100%" bgColor="brand.900" boxShadow="md">
             <HStack
                 as="nav"
                 width="100%"
                 margin="auto"
-                justify="center"
+                justify="space-between"
                 align="center"
                 p={4}
-                {...props}
-            >
+                {...props}>
                 <HStack align="center" spacing={2} pr={[0, 2]}>
-                    <Logo boxSize={10} />
                     {showName && (
-                        <Heading as="h1" fontSize="34px">
-                            {copy.title}
-                        </Heading>
+                        <Text color="white" fontSize="xl" as="u">
+                            <Link href="https://themetagame.xyz" target="_blank">
+                                Built by Metagame
+                            </Link>
+                        </Text>
                     )}
                 </HStack>
-                <Spacer />
-                <HStack align="center" spacing={[3, 4, 5, 6]}>
-                    <Twitter />
+                <HStack align="center" spacing={5} justify="flex-end">
                     <Opensea />
                     <Etherscan />
-                    {userName ? (
-                        <Box bgColor="brand.700" color="white" px={4} py={3} borderRadius="full">
-                            <HStack>
-                                {avatarUrl && <Avatar size="xs" src={`${avatarUrl}`} />}
-                                <Text>{userName}</Text>
-                            </HStack>
-                        </Box>
-                    ) : (
-                        <Button
-                            onClick={() => openWeb3Modal('Navbar')}
-                            fontWeight="normal"
-                            colorScheme="brand"
-                            bg="brand.700"
-                            size="lg"
-                            boxShadow="lg"
-                            fontSize="2xl"
-                            borderRadius="full"
-                        >
-                            Connect
-                        </Button>
-                    )}
+
+                    <CustomConnectButton isNavbar />
                 </HStack>
             </HStack>
         </Flex>

@@ -1,18 +1,42 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Heading, Link, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Image,
+    Link,
+    SimpleGrid,
+    Text,
+    useBreakpointValue,
+    VStack,
+} from '@chakra-ui/react';
+import { datadogRum } from '@datadog/browser-rum';
 import { parseEther } from '@ethersproject/units';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import axios from 'axios';
 import { getGPUTier } from 'detect-gpu';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, ethers } from 'ethers';
+import { AddressZ } from 'evm-translator/lib/interfaces/utils';
 import Head from 'next/head';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import nomadWhitehatAbi from 'utils/nomadWhitehatAbi';
+import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagmi';
 
 import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
+import CustomConnectButton from '@components/ConnectButton';
 import { maxW } from '@components/Layout';
+import MintButton, { MintStatus } from '@components/MintButton';
 
 import { ioredisClient } from '@utils';
-import { blackholeAddress, CONTRACT_ADDRESS, networkStrings, WEBSITE_URL } from '@utils/constants';
+import {
+    blackholeAddress,
+    CONTRACT_ADDRESS,
+    METABOT_BASE_API_URL,
+    networkStrings,
+    WEBSITE_URL,
+} from '@utils/constants';
 import { copy } from '@utils/content';
 import { debug, event } from '@utils/frontend';
 import { Metadata } from '@utils/metadata';
@@ -53,19 +77,33 @@ function heartbeatShowerLink(tokenId: number): string {
     return `https://${WEBSITE_URL}/heart/${tokenId}`;
 }
 
-function Home({ metadata }) {
-    const { provider, signer, userAddress, userName, eventParams, openWeb3Modal, toast } =
-        useEthereum();
+const Home = ({ metadata }) => {
+    const { userName, eventParams, openWeb3Modal, toast } = useEthereum();
+    const {
+        address: uncleanAddress,
+        isConnecting,
+        isDisconnected,
+    } = useAccount({ onDisconnect: datadogRum.removeUser });
+    const { chain } = useNetwork();
 
-    console.log(metadata);
-
-    const heartbeatContract = new Contract(CONTRACT_ADDRESS, heartbeat.abi, provider);
-
-    let [minted, setMinted] = useState(false);
-    let [minting, setMinting] = useState(false);
-    let [userTokenId, setUserTokenId] = useState<number>(null);
+    const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
     let [mintCount, setMintCount] = useState<number>(null);
+
+    const provider = useProvider();
+
+    const { data: signer } = useSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, nomadWhitehatAbi, provider);
+    const contractWithSigner = contract.connect(signer);
+
+    const [expandedSignature, setExpandedSignature] = useState({ v: null, r: null, s: null });
+    const [contentContainer, setContentContainer] = useState<HTMLElement | null>(null);
+    const [mintStatus, setMintStatus] = useState<MintStatus>(MintStatus.unknown);
+
+    const [userTokenId, setUserTokenId] = useState<number>(null);
+
+    const [showProcessingModal, setShowProcessingModal] = useState(false);
+    const [showMintedModal, setShowMintedModal] = useState(false);
 
     let [hasGPU, setHasGPU] = useState<boolean>(true);
 
@@ -73,95 +111,108 @@ function Home({ metadata }) {
         async function getUserMintedTokenId() {
             // userAddress has changed. TokenId defaults to null
             let tokenId = null;
+            let allowlist = false;
+            let signature = { v: null, r: null, s: null };
+            let errorCode = null;
+            let localMintStatus = MintStatus.loading;
+            setMintStatus(localMintStatus);
+
             try {
-                if (userAddress) {
-                    const filter = heartbeatContract.filters.Transfer(
-                        blackholeAddress,
-                        userAddress,
-                    );
-                    const [event] = await heartbeatContract.queryFilter(filter); // get first event, should only be one
+                if (address) {
+                    const filter = contract.filters.Transfer(blackholeAddress, address);
+                    const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     if (event) {
                         tokenId = event.args[2].toNumber();
+                        localMintStatus = MintStatus.minted;
                     }
                 }
+
+                if (address && localMintStatus !== MintStatus.minted) {
+                    axios
+                        .get(`${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`)
+                        .then(({ data }) => {
+                            localMintStatus = MintStatus.can_mint;
+                            setExpandedSignature(data.signature);
+                        })
+                        .catch(({ response }) => {
+                            const { errorCode } = response?.data;
+                            if (errorCode === 1) {
+                                localMintStatus = MintStatus.not_whitehat;
+                            } else if (errorCode === 2) {
+                                localMintStatus = MintStatus.processing;
+                                setShowProcessingModal(true);
+                            }
+                        })
+                        .finally(() => {
+                            setMintStatus(localMintStatus);
+                        });
+                }
+
+                if (!address) {
+                    localMintStatus = MintStatus.unknown;
+                }
             } catch (error) {
-                toast(toastErrorData('Get User Minted Token Error', JSON.stringify(error)));
-                debug({ error });
+                console.error(error);
+                // toast(toastErrorData('Get User Minted Token Error', JSON.stringify(error)))
             } finally {
-                // set it either to null, or to the userAddres's tokenId
                 setUserTokenId(tokenId);
+                setMintStatus(localMintStatus);
             }
         }
         getUserMintedTokenId();
-    }, [userAddress]);
+    }, [address, chain?.id]);
 
     // Mint Count
-    useEffect(() => {
-        async function getMintedCount() {
-            try {
-                console.log('getting mint count');
-                const mintCount: BigNumber = await heartbeatContract.mintedCount();
-                setMintCount(mintCount.toNumber());
-            } catch (error) {
-                debug({ error });
-            }
-        }
-        const interval = setInterval(getMintedCount, 4000);
-        return () => clearInterval(interval);
-    }, []);
+    // useEffect(() => {
+    //     async function getMintedCount() {
+    //         try {
+    //             console.log('getting mint count');
+    //             const mintCount: BigNumber = await heartbeatContract.mintedCount();
+    //             setMintCount(mintCount.toNumber());
+    //         } catch (error) {
+    //             debug({ error });
+    //         }
+    //     }
+    //     const interval = setInterval(getMintedCount, 4000);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     const mint = async () => {
-        event('Mint Button Clicked', eventParams);
-        const network = await provider.getNetwork();
-        if (network.name != networkStrings.ethers) {
-            event('Mint Attempt on Wrong Network', eventParams);
-            toast(wrongNetworkToast);
-            return;
-        }
+        // const provider = new ethers.providers.Web3Provider(provider)
+        // const signer = provider.getSigner()
+        const previousMintStatus = mintStatus;
+        setMintStatus(MintStatus.minting);
 
-        setMinting(true);
-        const heartbeatContractWritable = heartbeatContract.connect(signer);
-        const value = parseEther('0.01');
         try {
-            const data = await heartbeatContractWritable.mint({ value });
-            const moreData = await data.wait();
-            const [fromAddress, toAddress, tokenId] = moreData.events.find(
+            const tx = await contractWithSigner.mintWithSignature(
+                address,
+                expandedSignature.v,
+                expandedSignature.r,
+                expandedSignature.s,
+            );
+            const txReceipt = await tx.wait();
+            const [fromAddress, toAddress, tokenId] = txReceipt.events.find(
                 (e) => (e.event = 'Transfer'),
-            ).args;
+            ).args as [string, string, BigNumber];
+
+            datadogRum.addAction('mint success', {
+                txHash: tx.hash,
+                tokenId: tokenId.toString(),
+            });
+
+            console.log('Transaction:', tx.hash);
+
             setUserTokenId(tokenId.toNumber());
-            setMinting(false);
-            setMinted(true);
-            event('Mint Success', eventParams);
+            setMintStatus(MintStatus.minted);
+            setShowMintedModal(true);
         } catch (error) {
-            // const { reason, code, error, method, transaction } = error
-            setMinting(false);
-
-            if (error?.error?.message) {
-                const eventParamsWithError = {
-                    ...eventParams,
-                    errorMessage: error.error.message,
-                    errorReason: error.reason,
-                };
-                event('Mint Error', eventParamsWithError);
-                toast(toastErrorData(error.reason, error.error.message));
-            }
-        }
-    };
-
-    const mintText = () => {
-        if (!minting && !minted) {
-            return 'Mint';
-        } else if (minting) {
-            return 'Minting...';
-        } else if (minted) {
-            return 'Minted';
-        } else {
-            return 'wtf';
+            console.error(error);
+            setMintStatus(previousMintStatus);
         }
     };
 
     const textUnderButton = () => {
-        if (userTokenId) {
+        if (userTokenId || !address) {
             return <></>;
             // } else if (freeMintsLeft === null || freeMintsLeft > 0) {
             //     return (
@@ -173,7 +224,7 @@ function Home({ metadata }) {
             return (
                 <div>
                     <Text fontWeight="light" fontSize={['xl', '2xl']} color="white">
-                        0.01 ETH to mint
+                        Free to mint
                     </Text>
                     {mintCount && (
                         <Text fontWeight="light" fontSize={['sm', 'md']} color="white">
@@ -184,86 +235,106 @@ function Home({ metadata }) {
             );
         }
     };
+
+    let mintButtonAction = () => {};
+    switch (mintStatus) {
+        case MintStatus.can_mint:
+            mintButtonAction = () => mint();
+            break;
+        case MintStatus.processing:
+            mintButtonAction = () => setShowProcessingModal(true);
+            break;
+        case MintStatus.minted:
+            mintButtonAction = () => {
+                window.open(`/logbook/${userTokenId}`, '_blank');
+            };
+        case MintStatus.unknown:
+        default:
+            break;
+    }
+
+    const isMobile = !useBreakpointValue({ base: false, md: true });
+
     return (
         <Box align="center">
+            <Image
+                src={`/static/assets/thankYou.svg`}
+                alt="Thank you from all of us."
+                width="100%"
+                pt="20"
+                pb="20"
+            />
+            <Flex direction={isMobile ? 'column' : 'row'} w={['xs', 'sm', 'md', '5xl']} spacing={5}>
+                <Flex direction="column" align="flex-start" w={['100%', '60%']}>
+                    <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
+                    <Text fontSize={['4xl', '7xl']}>{copy.heading1}</Text>
+                    <Text fontSize="lg" align="left">
+                        {copy.text1}
+                    </Text>
+                </Flex>
+                <Flex direction="column" spacing={10} align="center" px={[4, 20]} mt={[10, 0]}>
+                    <Image src={`/static/assets/robloxHat.svg`} alt="White hat NFT preview" />
+                    <VStack justifyContent="center" spacing={4} w="100%">
+                        {!address ? <CustomConnectButton /> : null}
+                        {mintStatus !== MintStatus.unknown && (
+                            <MintButton mintStatus={mintStatus} action={mintButtonAction} />
+                        )}
+                        {textUnderButton()}
+                    </VStack>
+                </Flex>
+            </Flex>
+            <Image
+                src={`/static/assets/thankYou.svg`}
+                alt="Thank you from all of us."
+                width="100%"
+                pt="20"
+                pb="20"
+            />
+
             <Head>
                 <title>{copy.title}</title>
             </Head>
-            <Box px={8} pt={8} width="fit-content" mx="auto" maxW={maxW}>
-                <Heading as="h1" fontSize={[54, 72, 96]} textAlign="center" color="brand.900">
-                    {copy.title}
-                </Heading>
-                <Text fontSize={[16, 22, 30]} fontWeight="light" maxW={['container.md']} pb={4}>
-                    {copy.heroSubheading}
-                </Text>
-                <div
-                    style={{
-                        aspectRatio: '1/1',
-                        width: '80%',
-                        maxWidth: '800px',
-                    }}></div>
-            </Box>
-
-            <Box px={8} py={8} width="fit-content" margin="auto" maxW={maxW}>
-                <SimpleGrid columns={[1, 1, 1, 3]} align="center" spacing={16}>
-                    <About heading={copy.heading1} text={copy.text1} />
-                    <About heading={copy.heading2} text={copy.text2} />
-                    <About heading={copy.heading3} text={copy.text3} />
-                </SimpleGrid>
-            </Box>
-
-            <VStack justifyContent="center" spacing={4} px={4} py={8} bgColor="brand.700">
-                {!minted && !userTokenId ? (
-                    <Button
-                        onClick={userAddress ? mint : () => openWeb3Modal('Main Page Section')}
-                        isLoading={minting}
-                        loadingText="Minting..."
-                        isDisabled={minted}
-                        fontWeight="normal"
-                        colorScheme="brand"
-                        bgColor="brand.600"
-                        // color="brand.900"
-                        _hover={{ bg: 'brand.500' }}
-                        size="lg"
-                        height="60px"
-                        minW="xs"
-                        boxShadow="lg"
-                        fontSize="4xl"
-                        borderRadius="full">
-                        {userAddress ? mintText() : 'Connect Wallet'}
-                    </Button>
-                ) : (
-                    <Box fontSize={[24, 24, 36]} color="white">
-                        <Text>{`${userName}'s ${copy.title} (#${userTokenId}) has been minted.`}</Text>
-                        <Button
-                            colorScheme="brand"
-                            color="white"
-                            variant="outline"
-                            _hover={{ bgColor: 'brand.600' }}
-                            _active={{ bgColor: 'brand.500' }}
-                            mt={2}
-                            size="lg"
-                            rightIcon={<ExternalLinkIcon />}
-                            onClick={() => window.open(heartbeatShowerLink(userTokenId))}>
-                            View your Heartbeat
-                        </Button>
+            <Box px={8} py={20} bgColor="white">
+                <Box w={['xs', 'sm', 'md', '5xl']}>
+                    <Heading
+                        as="h1"
+                        fontSize={['20', '24', '36']}
+                        textAlign="center"
+                        textColor="brand.900">
+                        {copy.bottomSectonHeading}
+                    </Heading>
+                    <Text mt={4} textColor="brand.900" textAlign="left" fontSize={['lg', 'xl']}>
+                        {copy.bottomSectionText}
+                    </Text>
+                    <Box
+                        as="button"
+                        disabled={
+                            ![
+                                MintStatus.can_mint,
+                                MintStatus.processing,
+                                MintStatus.minted,
+                            ].includes(mintStatus)
+                        }
+                        onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
+                        type="button"
+                        bgColor="white"
+                        borderRadius={'xl'}
+                        borderColor="brand.800"
+                        borderWidth="1px"
+                        px={8}
+                        py={4}
+                        mt={4}
+                        _hover={{
+                            background: '#e8e8e8',
+                        }}>
+                        <Heading as="p" size={'lg'} color="brand.800">
+                            {copy.metagameCta}
+                        </Heading>
                     </Box>
-                )}
-                {textUnderButton()}
-            </VStack>
-            <Box px={8} py={20} width="fit-content" margin="auto" maxW={maxW}>
-                <Heading as="h1" fontSize={['24', '24', '36']} textAlign="center">
-                    {copy.bottomSectonHeading}
-                </Heading>
-                <Text mt={4} fontWeight="light" maxW="xl">
-                    {copy.bottomSectionText}
-                    <Link isExternal href={'https://twitter.com/The_Metagame'}>
-                        @The_Metagame
-                    </Link>
-                </Text>
+                </Box>
             </Box>
         </Box>
     );
-}
+};
 
 export default Home;
