@@ -6,16 +6,20 @@ export const enum MintStatus {
     loading = 'Loading...',
     can_mint = 'Mint',
     minting = 'Minting...',
-    minted = 'See your logbook',
+    minted = 'See your NFT',
     not_whitehat = 'Not a whitehat',
     processing = 'Processing...',
 }
 
-const MintButton = ({ mintStatus, clickable, action = (a) => a }) => (
+const MintButton = ({ mintStatus, action = (a) => a }) => (
     <div style={{ width: '100%' }}>
         <Button
             onClick={action}
-            loadingText="Minting..."
+            disabled={
+                ![MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(
+                    mintStatus,
+                )
+            }
             fontWeight="normal"
             colorScheme="brand"
             bgColor="brand.600"

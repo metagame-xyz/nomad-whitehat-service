@@ -79,9 +79,6 @@ const Home = ({ metadata }) => {
 
     const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
-    let [minted, setMinted] = useState(false);
-    let [minting, setMinting] = useState(false);
-
     let [mintCount, setMintCount] = useState<number>(null);
 
     const provider = useProvider();
@@ -178,27 +175,20 @@ const Home = ({ metadata }) => {
     const mint = async () => {
         // const provider = new ethers.providers.Web3Provider(provider)
         // const signer = provider.getSigner()
-        console.log('revvvvrevvv');
         const previousMintStatus = mintStatus;
         setMintStatus(MintStatus.minting);
 
         try {
-            console.log('here we go');
-            const tx = await contractWithSigner.callStatic.mintWithSignature(
+            const tx = await contractWithSigner.mintWithSignature(
                 address,
                 expandedSignature.v,
                 expandedSignature.r,
                 expandedSignature.s,
-                {
-                    value: parseEther('0.00'),
-                },
             );
-            console.log('did it :)');
             const txReceipt = await tx.wait();
             const [fromAddress, toAddress, tokenId] = txReceipt.events.find(
                 (e) => (e.event = 'Transfer'),
             ).args as [string, string, BigNumber];
-            console.log('if youre reading this its too late');
 
             datadogRum.addAction('mint success', {
                 txHash: tx.hash,
@@ -213,18 +203,6 @@ const Home = ({ metadata }) => {
         } catch (error) {
             console.error(error);
             setMintStatus(previousMintStatus);
-        }
-    };
-
-    const mintText = () => {
-        if (!minting && !minted) {
-            return 'Mint';
-        } else if (minting) {
-            return 'Minting...';
-        } else if (minted) {
-            return 'Minted';
-        } else {
-            return 'wtf';
         }
     };
 
@@ -271,9 +249,6 @@ const Home = ({ metadata }) => {
             break;
     }
 
-    const clickable = [MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(
-        mintStatus,
-    );
     return (
         <Box align="center">
             <Head>
@@ -302,11 +277,7 @@ const Home = ({ metadata }) => {
             <VStack justifyContent="center" spacing={4} px={4} py={8} bgColor="brand.700">
                 {!address ? <ConnectButton /> : null}
                 {mintStatus !== MintStatus.unknown && (
-                    <MintButton
-                        mintStatus={mintStatus}
-                        clickable={clickable}
-                        action={mintButtonAction}
-                    />
+                    <MintButton mintStatus={mintStatus} action={mintButtonAction} />
                 )}
                 {textUnderButton()}
             </VStack>
