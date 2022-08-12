@@ -264,15 +264,15 @@ const Home = ({ metadata }) => {
                 pt="20"
                 pb="20"
             />
-            <Flex direction={isMobile ? 'column' : 'row'} w="5xl" spacing={5}>
-                <Flex direction="column" align="flex-start" w="60%">
+            <Flex direction={isMobile ? 'column' : 'row'} w={['xs', 'sm', 'md', '5xl']} spacing={5}>
+                <Flex direction="column" align="flex-start" w={['100%', '60%']}>
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
-                    <Text fontSize="7xl">{copy.heading1}</Text>
+                    <Text fontSize={['4xl', '7xl']}>{copy.heading1}</Text>
                     <Text fontSize="lg" align="left">
                         {copy.text1}
                     </Text>
                 </Flex>
-                <Flex direction="column" spacing={10} align="center" px={20}>
+                <Flex direction="column" spacing={10} align="center" px={[4, 20]} mt={[10, 0]}>
                     <Image src={`/static/assets/robloxHat.svg`} alt="White hat NFT preview" />
                     <VStack justifyContent="center" spacing={4} w="100%">
                         {!address ? <CustomConnectButton /> : null}
@@ -295,15 +295,15 @@ const Home = ({ metadata }) => {
                 <title>{copy.title}</title>
             </Head>
             <Box px={8} py={20} bgColor="white">
-                <Box w="5xl">
+                <Box w={['xs', 'sm', 'md', '5xl']}>
                     <Heading
                         as="h1"
-                        fontSize={['24', '24', '36']}
+                        fontSize={['20', '24', '36']}
                         textAlign="center"
                         textColor="brand.900">
                         {copy.bottomSectonHeading}
                     </Heading>
-                    <Text mt={4} textColor="brand.900" textAlign="left" fontSize="xl">
+                    <Text mt={4} textColor="brand.900" textAlign="left" fontSize={['lg', 'xl']}>
                         {copy.bottomSectionText}
                     </Text>
                     <Box

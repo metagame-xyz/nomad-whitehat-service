@@ -31,7 +31,7 @@ function Navbar(props) {
                 as="nav"
                 width="100%"
                 margin="auto"
-                justify="center"
+                justify="space-between"
                 align="center"
                 p={4}
                 {...props}>
@@ -44,7 +44,6 @@ function Navbar(props) {
                         </Text>
                     )}
                 </HStack>
-                <Spacer />
                 <HStack align="center" spacing={5} justify="flex-end">
                     <Opensea />
                     <Etherscan />
