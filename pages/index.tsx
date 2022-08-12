@@ -1,5 +1,16 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Heading, Link, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Image,
+    Link,
+    SimpleGrid,
+    Text,
+    useBreakpointValue,
+    VStack,
+} from '@chakra-ui/react';
 import { datadogRum } from '@datadog/browser-rum';
 import { parseEther } from '@ethersproject/units';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -8,7 +19,6 @@ import { getGPUTier } from 'detect-gpu';
 import { BigNumber, Contract, ethers } from 'ethers';
 import { AddressZ } from 'evm-translator/lib/interfaces/utils';
 import Head from 'next/head';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import nomadWhitehatAbi from 'utils/nomadWhitehatAbi';
 import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagmi';
@@ -243,33 +253,55 @@ const Home = ({ metadata }) => {
             break;
     }
 
+    const isMobile = !useBreakpointValue({ base: false, md: true });
+
     return (
         <Box align="center">
+            <Image
+                src={`/static/assets/thankYou.svg`}
+                alt="Thank you from all of us."
+                width="100%"
+                pt="20"
+                pb="20"
+            />
+            <Flex direction={isMobile ? 'column' : 'row'} w="5xl" spacing={5}>
+                <Flex direction="column" align="flex-start" w="60%">
+                    <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
+                    <Text fontSize="7xl">White Hat Prize</Text>
+                    <Text fontSize="lg" align="left">
+                        Reputation and contribution are the lifeblood of a sustainable crypto
+                        revolution. We&apos;re here to offer our thanks to anyone who returns 90% or
+                        more of their withdrawal from the Nomad Bridge during the Bridge hack Claim
+                        an NFT endorsed by Nomad that proves your on-chain return of 90%+ funds
+                        after your withdrawal.
+                    </Text>
+                </Flex>
+                <Flex direction="column" spacing={10} align="center">
+                    <Image
+                        src={`/static/assets/robloxHat.svg`}
+                        alt="White hat NFT preview"
+                        width="80%"
+                    />
+                    <VStack justifyContent="center" spacing={4} px={4}>
+                        {!address ? <ConnectButton /> : null}
+                        {mintStatus !== MintStatus.unknown && (
+                            <MintButton mintStatus={mintStatus} action={mintButtonAction} />
+                        )}
+                        {textUnderButton()}
+                    </VStack>
+                </Flex>
+            </Flex>
+            <Image
+                src={`/static/assets/thankYou.svg`}
+                alt="Thank you from all of us."
+                width="100%"
+                pt="20"
+                pb="20"
+            />
+
             <Head>
                 <title>{copy.title}</title>
             </Head>
-            <Box px={8} pt={8} width="fit-content" mx="auto" maxW={maxW}>
-                <Heading as="h1" fontSize={[54, 72, 96]} textAlign="center" color="brand.900">
-                    {copy.title}
-                </Heading>
-                <Text fontSize={[16, 22, 30]} fontWeight="light" maxW={['container.md']} pb={4}>
-                    {copy.heroSubheading}
-                </Text>
-                <div
-                    style={{
-                        aspectRatio: '2/1',
-                        width: '80%',
-                        maxWidth: '800px',
-                    }}></div>
-            </Box>
-
-            <VStack justifyContent="center" spacing={4} px={4} py={8} bgColor="brand.700">
-                {!address ? <ConnectButton /> : null}
-                {mintStatus !== MintStatus.unknown && (
-                    <MintButton mintStatus={mintStatus} action={mintButtonAction} />
-                )}
-                {textUnderButton()}
-            </VStack>
             <Box px={8} py={20} width="fit-content" margin="auto" maxW={maxW}>
                 <Heading as="h1" fontSize={['24', '24', '36']} textAlign="center">
                     {copy.bottomSectonHeading}

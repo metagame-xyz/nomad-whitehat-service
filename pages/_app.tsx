@@ -1,7 +1,6 @@
 import { ChakraProvider, extendTheme, Flex } from '@chakra-ui/react';
 import { datadogRum } from '@datadog/browser-rum';
-import '@fontsource/courier-prime';
-import '@fontsource/lato';
+import '@fontsource/arimo';
 import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
@@ -54,7 +53,12 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
 
         return (
             <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider chains={chains} theme={lightTheme()}>
+                <RainbowKitProvider
+                    chains={chains}
+                    theme={lightTheme({
+                        accentColor: '#FDFFFF',
+                        accentColorForeground: '#151515',
+                    })}>
                     <ChakraProvider theme={theme}>
                         <EthereumProvider>
                             <Flex
@@ -72,7 +76,7 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
                                     // bgSize={bgSize}
                                     // bgRepeat="no-repeat repeat"
                                 >
-                                    <Flex bgColor="brand.100opaque" width="100%">
+                                    <Flex bgColor="brand.800" width="100%">
                                         <Layout>
                                             <Component {...pageProps} />
                                         </Layout>

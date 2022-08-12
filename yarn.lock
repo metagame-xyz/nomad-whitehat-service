@@ -1915,6 +1915,11 @@
     regenerator-runtime "^0.13.7"
     resolve-url "^0.2.1"
 
+"@fontsource/arimo@^4.5.9":
+  version "4.5.9"
+  resolved "https://registry.yarnpkg.com/@fontsource/arimo/-/arimo-4.5.9.tgz#700c1a9df40d950ad7242d96bcfe187cbbb516a3"
+  integrity sha512-uMp9s7zmegO9n8sCHP4t0KSV3jhBJmEM2GMGlF4KZ21Vvg5hsItk5dOC4mABoZgO3E8YrKfoT2LapEWX+PFIAQ==
+
 "@fontsource/courier-prime@^4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@fontsource/courier-prime/-/courier-prime-4.5.0.tgz#049de98b6d4f7b32ffeaa1cab0387a0fc03b1fc3"

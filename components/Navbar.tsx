@@ -3,8 +3,8 @@ import {
     Box,
     Button,
     Flex,
-    Heading,
     HStack,
+    Link,
     Spacer,
     Text,
     useBreakpointValue,
@@ -24,7 +24,7 @@ function Navbar(props) {
     const showName = useBreakpointValue({ base: false, md: true });
 
     return (
-        <Flex width="100%" bgColor="transparent" boxShadow="md">
+        <Flex width="100%" bgColor="brand.900" boxShadow="md">
             <HStack
                 as="nav"
                 width="100%"
@@ -34,18 +34,22 @@ function Navbar(props) {
                 p={4}
                 {...props}>
                 <HStack align="center" spacing={2} pr={[0, 2]}>
-                    <Logo boxSize={10} />
                     {showName && (
-                        <Heading as="h1" fontSize="34px">
-                            {copy.title}
-                        </Heading>
+                        <Text color="white" fontSize="xl" as="u">
+                            <Link href="https://themetagame.xyz" target="_blank">
+                                Built by Metagame
+                            </Link>
+                        </Text>
                     )}
                 </HStack>
                 <Spacer />
-                <HStack align="center" spacing={[3, 4, 5, 6]}>
+                <HStack align="center" spacing={5} justify="flex-end">
                     <Opensea />
                     <Etherscan />
-                    <ConnectButton />
+
+                    <Box>
+                        <ConnectButton chainStatus="none" />
+                    </Box>
                 </HStack>
             </HStack>
         </Flex>
