@@ -6,6 +6,7 @@ div#__next > div {
     padding: 0;
     margin: 0;
     font-family: 'arimo', sans-serif;
+    overflow-x: hidden;
 }
 
 a {
