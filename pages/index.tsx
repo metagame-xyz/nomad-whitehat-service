@@ -92,7 +92,6 @@ const Home = ({ metadata }) => {
 
     const [userTokenId, setUserTokenId] = useState<number>(null);
 
-    const [showMetabotModal, setShowMetabotModal] = useState(false);
     const [showProcessingModal, setShowProcessingModal] = useState(false);
     const [showMintedModal, setShowMintedModal] = useState(false);
 
@@ -126,12 +125,9 @@ const Home = ({ metadata }) => {
                             setExpandedSignature(data.signature);
                         })
                         .catch(({ response }) => {
-                            console.log(response.data, response.data.errorCode);
                             const { errorCode } = response?.data;
                             if (errorCode === 1) {
-                                console.log('GET OUTTA HERE');
                                 localMintStatus = MintStatus.not_whitehat;
-                                setShowMetabotModal(true);
                             } else if (errorCode === 2) {
                                 localMintStatus = MintStatus.processing;
                                 setShowProcessingModal(true);
