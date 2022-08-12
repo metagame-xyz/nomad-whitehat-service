@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
 export const enum MintStatus {
@@ -12,28 +12,25 @@ export const enum MintStatus {
 }
 
 const MintButton = ({ mintStatus, action = (a) => a }) => (
-    <div style={{ width: '100%' }}>
-        <Button
-            onClick={action}
-            disabled={
-                ![MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(
-                    mintStatus,
-                )
-            }
-            fontWeight="normal"
-            colorScheme="brand"
-            bgColor="brand.600"
-            // color="brand.900"
-            _hover={{ bg: 'brand.500' }}
-            size="lg"
-            height="60px"
-            minW="xs"
-            boxShadow="lg"
-            fontSize="4xl"
-            borderRadius="full">
+    <Box
+        as="button"
+        disabled={
+            ![MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(mintStatus)
+        }
+        onClick={action}
+        type="button"
+        bgColor="white"
+        borderRadius={'xl'}
+        px={8}
+        py={4}
+        w="100%"
+        _hover={{
+            background: '#e8e8e8',
+        }}>
+        <Heading as="h1" size={'lg'} color="brand.800">
             {mintStatus}
-        </Button>
-    </div>
+        </Heading>
+    </Box>
 );
 
 export default MintButton;

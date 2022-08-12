@@ -18,6 +18,8 @@ import { Etherscan, Logo, Opensea, Twitter } from '@components/Icons';
 
 import { copy } from '@utils/content';
 
+import CustomConnectButton from './ConnectButton';
+
 function Navbar(props) {
     const { userName, openWeb3Modal, avatarUrl } = useEthereum();
 
@@ -47,9 +49,7 @@ function Navbar(props) {
                     <Opensea />
                     <Etherscan />
 
-                    <Box>
-                        <ConnectButton chainStatus="none" />
-                    </Box>
+                    <CustomConnectButton isNavbar />
                 </HStack>
             </HStack>
         </Flex>

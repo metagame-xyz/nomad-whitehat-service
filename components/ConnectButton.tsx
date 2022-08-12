@@ -10,7 +10,7 @@ const CustomConnectButton = ({ isNavbar = false }) => {
             {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
                 return (
                     <div
-                        style={{ width: '90%' }}
+                        {...(!isNavbar && { style: { width: '90%' } })}
                         {...(!mounted && {
                             'aria-hidden': true,
                             style: {
@@ -28,13 +28,16 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                                         type="button"
                                         bgColor="white"
                                         borderRadius={'xl'}
-                                        px={8}
-                                        py={4}
+                                        px={isNavbar ? 4 : 8}
+                                        py={isNavbar ? 3 : 4}
                                         w="100%"
                                         _hover={{
                                             background: '#e8e8e8',
                                         }}>
-                                        <Heading as="h1" size="lg" color="brand.800">
+                                        <Heading
+                                            as="h1"
+                                            size={isNavbar ? 'sm' : 'lg'}
+                                            color="brand.800">
                                             Connect Wallet
                                         </Heading>
                                     </Box>
@@ -51,38 +54,12 @@ const CustomConnectButton = ({ isNavbar = false }) => {
 
                             return (
                                 <div style={{ display: 'flex', gap: 12 }}>
-                                    <button
-                                        onClick={openChainModal}
-                                        style={{ display: 'flex', alignItems: 'center' }}
-                                        type="button">
-                                        {chain.hasIcon && (
-                                            <div
-                                                style={{
-                                                    background: chain.iconBackground,
-                                                    width: 12,
-                                                    height: 12,
-                                                    borderRadius: 999,
-                                                    overflow: 'hidden',
-                                                    marginRight: 4,
-                                                }}>
-                                                {chain.iconUrl && (
-                                                    <img
-                                                        alt={chain.name ?? 'Chain icon'}
-                                                        src={chain.iconUrl}
-                                                        style={{ width: 12, height: 12 }}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                        {chain.name}
-                                    </button>
-
-                                    <button onClick={openAccountModal} type="button">
+                                    <Button onClick={openAccountModal} type="button">
                                         {account.displayName}
                                         {account.displayBalance
                                             ? ` (${account.displayBalance})`
                                             : ''}
-                                    </button>
+                                    </Button>
                                 </div>
                             );
                         })()}
