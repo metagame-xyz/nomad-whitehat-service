@@ -1,9 +1,8 @@
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Button } from 'grommet';
-import { Down } from 'grommet-icons';
 import React, { useState } from 'react';
 
-const CustomConnectButton = () => {
+const CustomConnectButton = ({ isNavbar = false }) => {
     const [connectLabel, setConnectLabel] = useState('Connect wallet');
     const [displayName, setDisplayName] = useState('');
     return (
@@ -11,6 +10,7 @@ const CustomConnectButton = () => {
             {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
                 return (
                     <div
+                        style={{ width: '90%' }}
                         {...(!mounted && {
                             'aria-hidden': true,
                             style: {
@@ -18,44 +18,71 @@ const CustomConnectButton = () => {
                                 pointerEvents: 'none',
                                 userSelect: 'none',
                             },
-                        })}
-                        style={{ width: '100%' }}>
+                        })}>
                         {(() => {
                             if (!mounted || !account || !chain) {
                                 return (
-                                    <div
-                                        onMouseEnter={() => setConnectLabel('> Connect Wallet <')}
-                                        onMouseLeave={() => setConnectLabel('Connect Wallet')}
-                                        style={{ width: '100%' }}>
-                                        <Button
-                                            onClick={openConnectModal}
-                                            primary
-                                            size="large"
-                                            label={connectLabel}
-                                            style={{ width: '100%' }}
-                                        />
-                                    </div>
+                                    <Box
+                                        as="button"
+                                        onClick={openConnectModal}
+                                        type="button"
+                                        bgColor="white"
+                                        borderRadius={'xl'}
+                                        px={8}
+                                        py={4}
+                                        w="100%"
+                                        _hover={{
+                                            background: '#e8e8e8',
+                                        }}>
+                                        <Heading as="h1" size="lg" color="brand.800">
+                                            Connect Wallet
+                                        </Heading>
+                                    </Box>
                                 );
                             }
 
                             if (chain.unsupported) {
-                                return <Button onClick={openChainModal}>Wrong network</Button>;
+                                return (
+                                    <button onClick={openChainModal} type="button">
+                                        Wrong network
+                                    </button>
+                                );
                             }
 
                             return (
-                                <div
-                                    style={{ display: 'flex', gap: 12 }}
-                                    onMouseEnter={() =>
-                                        setDisplayName(`> ${account.displayName} <`)
-                                    }
-                                    onMouseLeave={() => setDisplayName(account.displayName)}>
-                                    <Button
-                                        secondary
-                                        onClick={openAccountModal}
-                                        style={{ width: '100%' }}
-                                        label={displayName || account.displayName}
-                                        size="small"
-                                    />
+                                <div style={{ display: 'flex', gap: 12 }}>
+                                    <button
+                                        onClick={openChainModal}
+                                        style={{ display: 'flex', alignItems: 'center' }}
+                                        type="button">
+                                        {chain.hasIcon && (
+                                            <div
+                                                style={{
+                                                    background: chain.iconBackground,
+                                                    width: 12,
+                                                    height: 12,
+                                                    borderRadius: 999,
+                                                    overflow: 'hidden',
+                                                    marginRight: 4,
+                                                }}>
+                                                {chain.iconUrl && (
+                                                    <img
+                                                        alt={chain.name ?? 'Chain icon'}
+                                                        src={chain.iconUrl}
+                                                        style={{ width: 12, height: 12 }}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+                                        {chain.name}
+                                    </button>
+
+                                    <button onClick={openAccountModal} type="button">
+                                        {account.displayName}
+                                        {account.displayBalance
+                                            ? ` (${account.displayBalance})`
+                                            : ''}
+                                    </button>
                                 </div>
                             );
                         })()}

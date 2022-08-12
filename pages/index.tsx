@@ -212,7 +212,7 @@ const Home = ({ metadata }) => {
     };
 
     const textUnderButton = () => {
-        if (userTokenId) {
+        if (userTokenId || !address) {
             return <></>;
             // } else if (freeMintsLeft === null || freeMintsLeft > 0) {
             //     return (
@@ -276,14 +276,10 @@ const Home = ({ metadata }) => {
                         after your withdrawal.
                     </Text>
                 </Flex>
-                <Flex direction="column" spacing={10} align="center">
-                    <Image
-                        src={`/static/assets/robloxHat.svg`}
-                        alt="White hat NFT preview"
-                        width="80%"
-                    />
-                    <VStack justifyContent="center" spacing={4} px={4}>
-                        {!address ? <ConnectButton /> : null}
+                <Flex direction="column" spacing={10} align="center" px={20}>
+                    <Image src={`/static/assets/robloxHat.svg`} alt="White hat NFT preview" />
+                    <VStack justifyContent="center" spacing={4} w="100%">
+                        {!address ? <CustomConnectButton /> : null}
                         {mintStatus !== MintStatus.unknown && (
                             <MintButton mintStatus={mintStatus} action={mintButtonAction} />
                         )}
