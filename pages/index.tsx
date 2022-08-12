@@ -32,7 +32,6 @@ import { debug, event } from '@utils/frontend';
 import { Metadata } from '@utils/metadata';
 import { getParametersFromTxnCounts } from '@utils/parameters';
 
-import Heart from '../components/heart/index.jsx';
 import heartbeat from '../heartbeat.json';
 
 export const getServerSideProps = async () => {
@@ -266,12 +265,7 @@ const Home = ({ metadata }) => {
                         aspectRatio: '2/1',
                         width: '80%',
                         maxWidth: '800px',
-                    }}>
-                    {/* <Heart
-                        address={metadata.address}
-                        attributes={getParametersFromTxnCounts(metadata.txnCounts)}
-                    /> */}
-                </div>
+                    }}></div>
             </Box>
 
             <VStack justifyContent="center" spacing={4} px={4} py={8} bgColor="brand.700">

@@ -43,6 +43,8 @@ function Navbar(props) {
                 </HStack>
                 <Spacer />
                 <HStack align="center" spacing={[3, 4, 5, 6]}>
+                    <Opensea />
+                    <Etherscan />
                     <ConnectButton />
                 </HStack>
             </HStack>
