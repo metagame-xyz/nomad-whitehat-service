@@ -226,7 +226,6 @@ const Home = ({ metadata }) => {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     let mintButtonAction = () => {};
     switch (mintStatus) {
         case MintStatus.can_mint:
