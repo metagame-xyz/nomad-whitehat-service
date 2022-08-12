@@ -35,7 +35,7 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                                             background: '#e8e8e8',
                                         }}>
                                         <Heading
-                                            as="h1"
+                                            as="p"
                                             size={isNavbar ? 'sm' : 'lg'}
                                             color="brand.800">
                                             Connect Wallet

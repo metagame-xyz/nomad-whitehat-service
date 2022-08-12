@@ -52,14 +52,14 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
         const Layout = dynamic(() => import('@components/Layout'));
 
         return (
-            <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider
-                    chains={chains}
-                    theme={lightTheme({
-                        accentColor: '#FDFFFF',
-                        accentColorForeground: '#151515',
-                    })}>
-                    <ChakraProvider theme={theme}>
+            <ChakraProvider theme={theme}>
+                <WagmiConfig client={wagmiClient}>
+                    <RainbowKitProvider
+                        chains={chains}
+                        theme={lightTheme({
+                            accentColor: '#FDFFFF',
+                            accentColorForeground: '#151515',
+                        })}>
                         <EthereumProvider>
                             <Flex
                                 // backgroundImage={leftBg.src}
@@ -84,9 +84,9 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
                                 </Flex>
                             </Flex>
                         </EthereumProvider>
-                    </ChakraProvider>
-                </RainbowKitProvider>
-            </WagmiConfig>
+                    </RainbowKitProvider>
+                </WagmiConfig>
+            </ChakraProvider>
         );
     }
 }

@@ -20,12 +20,17 @@ export const copy = {
     title: 'Welcome, whitehats',
     nameLowercase: 'heartbeat',
     heroSubheading: description,
-    heading1: 'Living, Breathing',
-    text1: 'Every night, your heartbeat is updated using your recent on-chain activity.',
+    heading1: 'White Hat Prize',
+    text1: `Reputation and contribution are the lifeblood of a sustainable crypto
+                        revolution. We&apos;re here to offer our thanks to anyone who returns 90% or
+                        more of their withdrawal from the Nomad Bridge during the Bridge hack Claim
+                        an NFT endorsed by Nomad that proves your on-chain return of 90%+ funds
+                        after your withdrawal.`,
     heading2: 'Multi-chain',
     text2: 'Activity is tracked across Ethereum, Polygon, Fantom, and Avalanche.',
     heading3: 'Earned Attributes',
     text3: 'The layers, speed, colors, and spikes are each based on a different length of time. What can you do to make yours more unique?',
-    bottomSectonHeading: 'Metagame',
-    bottomSectionText: `Heartbeat is the third and final NFT of Metagame's Phase 1. Phase 2 will be an infinite series of achievements you earn by playing a game many of us are already playing whether we know it or not: The Metagame. These earned achievements will allow access to private spaces gated by shared experiences. Each achievement will contribute to leveling up your character. Follow along: `,
+    bottomSectonHeading: 'EARNED NFTS ARE THE FUTURE',
+    bottomSectionText: `Earned NFTs reward the best in crypto communities, granting them access, permissions and status that can’t be bought. They crystallize our achievements, contributions, sacrifices and convictions and help others know who is more trustworthy, more knowledgeable, more helpful. Interested in bringing these to your community?`,
+    metagameCta: 'Play the game',
 };

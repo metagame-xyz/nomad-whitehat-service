@@ -267,13 +267,9 @@ const Home = ({ metadata }) => {
             <Flex direction={isMobile ? 'column' : 'row'} w="5xl" spacing={5}>
                 <Flex direction="column" align="flex-start" w="60%">
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
-                    <Text fontSize="7xl">White Hat Prize</Text>
+                    <Text fontSize="7xl">{copy.heading1}</Text>
                     <Text fontSize="lg" align="left">
-                        Reputation and contribution are the lifeblood of a sustainable crypto
-                        revolution. We&apos;re here to offer our thanks to anyone who returns 90% or
-                        more of their withdrawal from the Nomad Bridge during the Bridge hack Claim
-                        an NFT endorsed by Nomad that proves your on-chain return of 90%+ funds
-                        after your withdrawal.
+                        {copy.text1}
                     </Text>
                 </Flex>
                 <Flex direction="column" spacing={10} align="center" px={20}>
@@ -298,16 +294,44 @@ const Home = ({ metadata }) => {
             <Head>
                 <title>{copy.title}</title>
             </Head>
-            <Box px={8} py={20} width="fit-content" margin="auto" maxW={maxW}>
-                <Heading as="h1" fontSize={['24', '24', '36']} textAlign="center">
-                    {copy.bottomSectonHeading}
-                </Heading>
-                <Text mt={4} fontWeight="light" maxW="xl">
-                    {copy.bottomSectionText}
-                    <Link isExternal href={'https://twitter.com/The_Metagame'}>
-                        @The_Metagame
-                    </Link>
-                </Text>
+            <Box px={8} py={20} bgColor="white">
+                <Box w="5xl">
+                    <Heading
+                        as="h1"
+                        fontSize={['24', '24', '36']}
+                        textAlign="center"
+                        textColor="brand.900">
+                        {copy.bottomSectonHeading}
+                    </Heading>
+                    <Text mt={4} textColor="brand.900" textAlign="left" fontSize="xl">
+                        {copy.bottomSectionText}
+                    </Text>
+                    <Box
+                        as="button"
+                        disabled={
+                            ![
+                                MintStatus.can_mint,
+                                MintStatus.processing,
+                                MintStatus.minted,
+                            ].includes(mintStatus)
+                        }
+                        onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
+                        type="button"
+                        bgColor="white"
+                        borderRadius={'xl'}
+                        borderColor="brand.800"
+                        borderWidth="1px"
+                        px={8}
+                        py={4}
+                        mt={4}
+                        _hover={{
+                            background: '#e8e8e8',
+                        }}>
+                        <Heading as="p" size={'lg'} color="brand.800">
+                            {copy.metagameCta}
+                        </Heading>
+                    </Box>
+                </Box>
             </Box>
         </Box>
     );
