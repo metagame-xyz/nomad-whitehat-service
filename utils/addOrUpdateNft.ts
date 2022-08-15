@@ -20,8 +20,10 @@ export type newNftResponse = {
 export async function addOrUpdateNft(
     minterAddress: string,
     tokenId: string,
+    forceCount = false,
 ): Promise<newNftResponse> {
     const address = minterAddress.toLowerCase();
+    console.log('add or update', address, tokenId);
 
     const logData: LogData = {
         level: 'info',
@@ -51,11 +53,15 @@ export async function addOrUpdateNft(
             ? formatNewMetadata(address, txnCounts, userName, tokenId)
             : formatMetadataWithOldMetadata(oldMetadata, txnCounts, userName);
 
+        if (forceCount) {
+            metadata.txnCounts.ethereum.transactionsYesterday += 1;
+            metadata.txnCounts.ethereum.transactionsLastWeek += 1;
+            metadata.txnCounts.ethereum.transactionsLastMonth += 1;
+            metadata.txnCounts.ethereum.totalTransactions += 1;
+        }
+        console.log('set it', metadata);
         await ioredisClient.hset(address, { tokenId, metadata: JSON.stringify(metadata) });
         await ioredisClient.hset(tokenId, { address: address, metadata: JSON.stringify(metadata) });
-
-        logData.third_party_name = 'urlbox';
-        generateGIFWithUrlbox(tokenId);
 
         logSuccess(logData);
         return {
@@ -65,6 +71,8 @@ export async function addOrUpdateNft(
             ensName: userName,
         };
     } catch (error) {
+        console.log('add/update error', address, tokenId);
+
         logError(logData, error);
         throw error;
     }

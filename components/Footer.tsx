@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, Link, Stack, Text } from '@chakra-ui/react';
+import { Center, Flex, Grid, Heading, Link, Stack, Text } from '@chakra-ui/react';
 
 import { Etherscan, Opensea, TwelveCircles, Twitter } from './Icons';
 
@@ -6,38 +6,27 @@ const hover = { color: 'brand.300' };
 
 export default function Footer(props) {
     return (
-        <Flex width="100%" bgColor="brand.700">
+        <Flex width="100%" bgColor="brand.900">
             <Grid
                 as="footer"
                 w={'100%'}
                 margin="auto"
-                p={4}
+                p={6}
                 gap={1}
-                templateColumns="repeat(3, 1fr)"
+                templateColumns="repeat(2, 1fr)"
                 color="brand.50"
                 {...props}>
-                <Flex align="center">
-                    <Text fontSize="sm">
-                        {`code & art by `}
-                        <Link isExternal href="https://www.twitter.com/brennerspear">
-                            brenner.eth
-                        </Link>
-                        {' & '}
-                        <Link isExternal href="https://twitter.com/rlostrevino">
-                            @rlostrevino
-                        </Link>
-                    </Text>
-                </Flex>
                 <Stack
+                    onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
                     direction={['column', 'column', 'row']}
                     spacing={2}
                     align="center"
-                    justify="center">
+                    justify="start">
                     <TwelveCircles boxSize={8} color="white" />
                     {/* pt=1 cuz this font sits too high */}
-                    <Center fontFamily="courier prime" pt={1} fontSize={['sm', 'md', 'xl', 'xl']}>
-                        The Metagame
-                    </Center>
+                    <Heading pt={1} fontSize={['sm', 'md', 'xl', 'xl']}>
+                        Metagame
+                    </Heading>
                 </Stack>
                 <Stack
                     direction={'row'}

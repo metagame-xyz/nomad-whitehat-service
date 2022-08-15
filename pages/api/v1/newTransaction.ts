@@ -3,10 +3,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { isValidEventForwarderSignature } from '@utils';
 import { addOrUpdateNft } from '@utils/addOrUpdateNft';
 import { LogData, logError, logSuccess } from '@utils/logging';
-import { addressMap } from '@utils/testAddresses';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('tokenId:', req.query.tokenId);
+    console.log('tokenId:', req.body.tokenId);
     if (req.method !== 'POST') {
         return res.status(404).send({});
     }
@@ -30,12 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         wallet_address: address,
     };
 
-    if (process.env.VERCEL_ENV !== 'production') {
-        address = addressMap[tokenId.toString()];
-    }
-
     try {
-        const result = await addOrUpdateNft(address, tokenId);
+        const result = await addOrUpdateNft(address, tokenId, true);
 
         logSuccess(logData);
         res.status(200).send({
@@ -44,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             result,
         });
     } catch (error) {
+        console.log('new txn error');
         logError(logData, error);
         return res.status(500).send({ error });
     }

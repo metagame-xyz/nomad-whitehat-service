@@ -18,7 +18,7 @@ export async function getTxnData(minterAddress: string, tokenId = null): Promise
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).getTime();
     const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).getTime();
 
-    const networks: ProductionNetworks[] = ['ethereum', 'polygon', 'fantom', 'avalanche'];
+    const networks: ProductionNetworks[] = ['ethereum', 'polygon', 'fantom'];
 
     for (const network of networks) {
         let transactions = [];
@@ -59,6 +59,13 @@ export async function getTxnData(minterAddress: string, tokenId = null): Promise
             transactionsLastMonth: txnsInLastMonth,
         };
     }
+
+    txnCounts.avalanche = {
+        totalTransactions: 0,
+        transactionsYesterday: 0,
+        transactionsLastWeek: 0,
+        transactionsLastMonth: 0,
+    };
 
     return txnCounts;
 }
@@ -114,9 +121,9 @@ export function formatNewMetadata(
     const beatsPerMinute = getBeatsPerMinute(txnCounts);
 
     const metadata: Metadata = {
-        name: `${userName}'s Heartbeat`,
+        name: `${userName}'s Whitehat`,
         description: desc(networkCount, beatsPerMinute),
-        image: `https://${WEBSITE_URL}/growing.png`,
+        image: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`,
         externalUrl: `https://${WEBSITE_URL}/heart/${tokenId}`,
         animationUrl: `https://${WEBSITE_URL}/view/${tokenId}`,
         address: minterAddress,
@@ -141,7 +148,7 @@ export function formatMetadataWithOldMetadata(
 
     const metadata: Metadata = {
         ...oldMetadata,
-        name: `${userName}'s Heartbeat`,
+        name: `${userName}'s Whitehat`,
         description: desc(networkCount, beatsPerMinute),
         networkCount,
         beatsPerMinute,
@@ -184,20 +191,7 @@ export function metadataToOpenSeaMetadata(metadata: Metadata): OpenSeaMetadata {
         external_url: metadata.externalUrl,
         animation_url: metadata.animationUrl,
         iframe_url: metadata.animationUrl,
-        attributes: [
-            {
-                trait_type: 'address',
-                value: metadata.address,
-            },
-            {
-                trait_type: 'Active Network Count',
-                value: metadata.networkCount,
-            },
-            {
-                trait_type: 'Beats Per Minute',
-                value: metadata.beatsPerMinute,
-            },
-        ],
+        attributes: [],
     };
 
     for (const network in metadata.txnCounts) {
