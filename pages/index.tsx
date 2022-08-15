@@ -117,13 +117,14 @@ const Home = ({ metadata }) => {
                 if (address) {
                     const filter = contract.filters.Transfer(blackholeAddress, address);
                     const [event] = await contract.queryFilter(filter); // get first event, should only be one
+                    // TODO: uncomment these next parts
                     if (event) {
                         // tokenId = event.args[2].toNumber();
                         // localMintStatus = MintStatus.minted;
                     }
                 }
 
-                if (address && localMintStatus !== MintStatus.minted) {
+                if (address /* && localMintStatus !== MintStatus.minted*/) {
                     axios
                         .get(`${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`)
                         .then(({ data }) => {
