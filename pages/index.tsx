@@ -73,10 +73,6 @@ const toastErrorData = (title: string, description: string) => ({
     isClosable: true,
 });
 
-function heartbeatShowerLink(tokenId: number): string {
-    return `https://${WEBSITE_URL}/heart/${tokenId}`;
-}
-
 const Home = ({ metadata }) => {
     const { userName, eventParams, openWeb3Modal, toast } = useEthereum();
     const {
@@ -99,7 +95,7 @@ const Home = ({ metadata }) => {
     const [expandedSignature, setExpandedSignature] = useState({ v: null, r: null, s: null });
     const [contentContainer, setContentContainer] = useState<HTMLElement | null>(null);
     const [mintStatus, setMintStatus] = useState<MintStatus>(MintStatus.unknown);
-
+    const [error, setError] = useState<string | undefined>();
     const [userTokenId, setUserTokenId] = useState<number>(null);
 
     const [showProcessingModal, setShowProcessingModal] = useState(false);
@@ -122,8 +118,8 @@ const Home = ({ metadata }) => {
                     const filter = contract.filters.Transfer(blackholeAddress, address);
                     const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     if (event) {
-                        tokenId = event.args[2].toNumber();
-                        localMintStatus = MintStatus.minted;
+                        // tokenId = event.args[2].toNumber();
+                        // localMintStatus = MintStatus.minted;
                     }
                 }
 
@@ -194,7 +190,6 @@ const Home = ({ metadata }) => {
             const [fromAddress, toAddress, tokenId] = txReceipt.events.find(
                 (e) => (e.event = 'Transfer'),
             ).args as [string, string, BigNumber];
-
             datadogRum.addAction('mint success', {
                 txHash: tx.hash,
                 tokenId: tokenId.toString(),

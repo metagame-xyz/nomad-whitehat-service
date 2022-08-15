@@ -5,7 +5,7 @@ import { addOrUpdateNft } from '@utils/addOrUpdateNft';
 import { LogData, logError, logSuccess } from '@utils/logging';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('tokenId:', req.query.tokenId);
+    console.log('tokenId:', req.body.tokenId);
     if (req.method !== 'POST') {
         return res.status(404).send({});
     }
@@ -39,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             result,
         });
     } catch (error) {
+        console.log('new txn error');
         logError(logData, error);
         return res.status(500).send({ error });
     }
