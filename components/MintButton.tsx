@@ -27,7 +27,7 @@ const MintButton = ({ mintStatus, action = (a) => a }) => (
         _hover={{
             background: '#e8e8e8',
         }}>
-        <Heading as="p" size={'lg'} color="brand.800">
+        <Heading as="p" size={'lg'} color="brand.800" fontWeight="400">
             {mintStatus}
         </Heading>
     </Box>

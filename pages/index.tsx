@@ -38,7 +38,7 @@ import {
     WEBSITE_URL,
 } from '@utils/constants';
 import { copy } from '@utils/content';
-import { debug, event } from '@utils/frontend';
+import useWindowDimensions, { debug, event } from '@utils/frontend';
 import { Metadata } from '@utils/metadata';
 import { getParametersFromTxnCounts } from '@utils/parameters';
 
@@ -253,18 +253,26 @@ const Home = ({ metadata }) => {
             break;
     }
 
-    const isMobile = !useBreakpointValue({ base: false, md: true });
+    const { height, width } = useWindowDimensions();
+    let thankYouAssetSize;
+    if (width < 500) {
+        thankYouAssetSize = 'Large';
+    } else if (width < 2000) {
+        thankYouAssetSize = 'Medium';
+    } else {
+        thankYouAssetSize = 'Small';
+    }
 
     return (
         <Box align="center">
             <Image
-                src={`/static/assets/thankYou.svg`}
+                src={`/static/assets/thankYou${thankYouAssetSize}.svg`}
                 alt="Thank you from all of us."
                 width="100%"
                 pt="20"
                 pb="20"
             />
-            <Flex direction={isMobile ? 'column' : 'row'} w={['xs', 'sm', 'md', '5xl']} spacing={5}>
+            <Flex direction={['column', 'row']} w={['xs', 'sm', 'md', '5xl']} spacing={5}>
                 <Flex direction="column" align="flex-start" w={['100%', '60%']}>
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
                     <Text fontSize={['4xl', '7xl']}>{copy.heading1}</Text>
@@ -284,7 +292,7 @@ const Home = ({ metadata }) => {
                 </Flex>
             </Flex>
             <Image
-                src={`/static/assets/thankYou.svg`}
+                src={`/static/assets/thankYou${thankYouAssetSize}.svg`}
                 alt="Thank you from all of us."
                 width="100%"
                 pt="20"
@@ -327,7 +335,7 @@ const Home = ({ metadata }) => {
                         _hover={{
                             background: '#e8e8e8',
                         }}>
-                        <Heading as="p" size={'lg'} color="brand.800">
+                        <Heading as="p" size={'lg'} color="brand.800" fontWeight="400">
                             {copy.metagameCta}
                         </Heading>
                     </Box>

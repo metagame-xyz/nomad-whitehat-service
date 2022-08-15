@@ -37,6 +37,7 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                                         <Heading
                                             as="p"
                                             size={isNavbar ? 'sm' : 'lg'}
+                                            fontWeight="400"
                                             color="brand.800">
                                             Connect Wallet
                                         </Heading>
@@ -54,7 +55,10 @@ const CustomConnectButton = ({ isNavbar = false }) => {
 
                             return (
                                 <div style={{ display: 'flex', gap: 12 }}>
-                                    <Button onClick={openAccountModal} type="button">
+                                    <Button
+                                        onClick={openAccountModal}
+                                        type="button"
+                                        fontWeight="400">
                                         {account.displayName}
                                         {account.displayBalance
                                             ? ` (${account.displayBalance})`

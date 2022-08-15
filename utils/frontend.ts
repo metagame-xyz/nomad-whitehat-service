@@ -1,6 +1,7 @@
 import { createHmac } from 'crypto';
 import { IPFS } from 'ipfs-core-types';
 import { create } from 'ipfs-http-client';
+import { useEffect, useState } from 'react';
 
 import { WEBSITE_URL } from './constants';
 import { TxnCounts } from './metadata';
@@ -144,4 +145,27 @@ export async function updateImage(
     const url = `https://${WEBSITE_URL}/api/v1/updateImage`;
     const response = await fetcher(url, options);
     return response;
+}
+
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height,
+    };
+}
+
+export default function useWindowDimensions() {
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    return windowDimensions;
 }
