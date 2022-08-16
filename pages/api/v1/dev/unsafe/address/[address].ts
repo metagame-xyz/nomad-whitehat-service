@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const logData: LogData = {
         level: 'info',
         token_id: null,
-        function_name: 'addOrUpdateNft',
+        function_name: 'addMetadata',
         message: `begin`,
         wallet_address: address,
     };
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let metadata: Metadata;
     try {
         const userName = await getUserName(address);
-        metadata = formatNewMetadata(address, txnCounts, userName, '1');
+        metadata = formatNewMetadata(address, userName, false, {});
     } catch (error) {
         console.log(error);
         logError(logData, error);

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { addOrUpdateNft } from '@utils/addOrUpdateNft';
+import { addMetadata } from '@utils/addMetadata';
 import { LogData, logError, logSuccess } from '@utils/logging';
 import { getAddressForTokenId } from '@utils/metadata';
 
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
         const address = await getAddressForTokenId(tokenIdString);
-        const response = await addOrUpdateNft(address, tokenIdString);
+        const response = await addMetadata(address, tokenIdString);
 
         logSuccess(logData);
         res.send(response);
