@@ -1,15 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { getUserName, ioredisClient } from '@utils';
-import {
-    formatMetadataWithOldMetadata,
-    formatNewMetadata,
-    generateNewMetadata,
-    getTxnData,
-    Metadata,
-    TxnCounts,
-} from '@utils/metadata';
-import { generateGIFWithUrlbox } from '@utils/urlbox';
+import { formatNewMetadata, Metadata } from '@utils/metadata';
 
 import { METABOT_BASE_API_URL } from './constants';
 import { LogData, logError, logSuccess } from './logging';
@@ -23,24 +15,21 @@ export type newNftResponse = {
 
 export async function addMetadata(minterAddress: string, tokenId: string): Promise<newNftResponse> {
     const address = minterAddress.toLowerCase();
-    console.log('add or update', address, tokenId);
 
     const logData: LogData = {
         level: 'info',
         token_id: tokenId,
-        function_name: 'addOrUpdateNft',
+        function_name: 'addMetadata',
         message: `begin`,
         wallet_address: address,
     };
 
     let userName: string;
     try {
-        logData.third_party_name = 'getTxnData';
-
         logData.third_party_name = 'ethers getUserName';
         userName = await getUserName(address);
 
-        logData.third_party_name = 'redis';
+        logData.third_party_name = 'redis get metadata';
         const oldMetadata: Metadata = JSON.parse(await ioredisClient.hget(tokenId, 'metadata'));
         if (oldMetadata) {
             // Should never happen in production
@@ -52,6 +41,7 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
             };
         }
 
+        logData.third_party_name = 'get whitehat data';
         let returnedEverything;
         let tokensReturned;
         try {
@@ -67,7 +57,10 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
             tokensReturned = {};
         }
 
-        let metadata = generateNewMetadata(address, userName, returnedEverything, tokensReturned);
+        logData.third_party_name = 'formatNewMetadata';
+        let metadata = formatNewMetadata(address, userName, returnedEverything, tokensReturned);
+
+        logData.third_party_name = 'redis set metadata';
 
         await ioredisClient.hset(address, { tokenId, metadata: JSON.stringify(metadata) });
         await ioredisClient.hset(tokenId, { address: address, metadata: JSON.stringify(metadata) });

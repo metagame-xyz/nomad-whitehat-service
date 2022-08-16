@@ -118,12 +118,12 @@ const getNetworkCount = (txnCounts: TxnCounts) => {
     );
 };
 
-export const generateNewMetadata = async (
+export const formatNewMetadata = (
     minterAddress: string,
     userName: string,
     returnedEverything: boolean,
     tokensReturned: TokensReturned,
-): Promise<Metadata> => {
+): Metadata => {
     const attributes: Attributes = [];
     if (returnedEverything) {
         attributes.push({ value: 'Returned everything' });
