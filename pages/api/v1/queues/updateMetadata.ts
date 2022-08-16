@@ -1,6 +1,6 @@
 import { Queue } from 'quirrel/next';
 
-import { addOrUpdateNft } from '@utils/addMetadata';
+import { addMetadata } from '@utils/addMetadata';
 import { LogData, logError, logSuccess } from '@utils/logging';
 import { getAddressForTokenId } from '@utils/metadata';
 
@@ -24,7 +24,7 @@ export default Queue(
             const address = await getAddressForTokenId(tokenId);
             logData.wallet_address = address;
 
-            await addOrUpdateNft(address, tokenId);
+            await addMetadata(address, tokenId);
 
             logSuccess(logData, `success: ${tokenId}`);
         } catch (error) {

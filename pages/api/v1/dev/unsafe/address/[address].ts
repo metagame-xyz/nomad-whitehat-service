@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const logData: LogData = {
         level: 'info',
         token_id: null,
-        function_name: 'addOrUpdateNft',
+        function_name: 'addMetadata',
         message: `begin`,
         wallet_address: address,
     };
