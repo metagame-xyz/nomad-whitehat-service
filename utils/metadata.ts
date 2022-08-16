@@ -1,4 +1,4 @@
-import { ioredisClient } from '@utils';
+import { getUserName, ioredisClient } from '@utils';
 import { ProductionNetworks, WEBSITE_URL } from '@utils/constants';
 
 import { getBeatsPerMinute } from './frontend';
@@ -84,24 +84,31 @@ export type SingleNetworkTxnCounts = {
     transactionsLastMonth: number;
 };
 
+export interface GenericAttribute {
+    trait_type: string;
+    value: number;
+}
+
+export interface ReturnedEverythingAttribute {
+    value: 'Returned everything';
+}
+
+export type Attributes = (GenericAttribute | ReturnedEverythingAttribute)[];
+
 export type Metadata = {
     name: string;
     description: string;
     image: string;
-    externalUrl: string;
     animationUrl: string;
     address: string;
-    txnCounts: TxnCounts;
-    networkCount: number;
-    beatsPerMinute: number;
+    attributes: Attributes;
 };
 
-const desc = (networkCount, beatsPerMinute) =>
-    beatsPerMinute
-        ? `A heart beating ${beatsPerMinute} beats per minute across ${networkCount} chain${
-              networkCount != 1 ? 's' : ''
-          }.`
-        : `A flatlining heart`;
+export interface TokensReturned {
+    [key: string]: number;
+}
+
+const desc = () => 'Thank you from all of us'; // todo
 
 const getNetworkCount = (txnCounts: TxnCounts) => {
     debug(txnCounts);
@@ -111,67 +118,38 @@ const getNetworkCount = (txnCounts: TxnCounts) => {
     );
 };
 
-export function formatNewMetadata(
+export const generateNewMetadata = async (
     minterAddress: string,
-    txnCounts: TxnCounts, // update
     userName: string,
-    tokenId: string,
-): Metadata {
-    const networkCount = getNetworkCount(txnCounts);
-    const beatsPerMinute = getBeatsPerMinute(txnCounts);
-
+    returnedEverything: boolean,
+    tokensReturned: TokensReturned,
+): Promise<Metadata> => {
+    const attributes: Attributes = [];
+    if (returnedEverything) {
+        attributes.push({ value: 'Returned everything' });
+    }
+    Object.entries(tokensReturned).forEach(([symbol, amount]) => {
+        attributes.push({ trait_type: `${symbol} returned`, value: amount });
+    });
     const metadata: Metadata = {
         name: `${userName}'s Whitehat`,
-        description: desc(networkCount, beatsPerMinute),
-        image: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`,
-        externalUrl: `https://${WEBSITE_URL}/heart/${tokenId}`,
-        animationUrl: `https://${WEBSITE_URL}/view/${tokenId}`,
+        description: 'Thank you from all of us', // TODO
+        image: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`, //gif
+        animationUrl: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`, //mp4
         address: minterAddress,
-        networkCount,
-        beatsPerMinute,
-        txnCounts,
+        attributes,
     };
 
     return metadata;
-}
-
-export function formatMetadataWithOldMetadata(
-    oldMetadata: Metadata,
-    txnCounts: TxnCounts,
-    userName: string,
-): Metadata {
-    const networkCount = getNetworkCount(txnCounts);
-
-    debug(txnCounts);
-
-    const beatsPerMinute = getBeatsPerMinute(txnCounts);
-
-    const metadata: Metadata = {
-        ...oldMetadata,
-        name: `${userName}'s Whitehat`,
-        description: desc(networkCount, beatsPerMinute),
-        networkCount,
-        beatsPerMinute,
-        txnCounts,
-    };
-
-    return metadata;
-}
-
-type Attributes = {
-    display_type?: string;
-    trait_type: string;
-    value: any;
 };
 
 export type OpenSeaMetadata = {
     name: string;
     description: string;
     image: string;
-    external_url: string;
     animation_url: string;
     iframe_url: string;
-    attributes: Attributes[];
+    attributes: Attributes;
 };
 
 const camelCaseToSnakeCase = (str: string) =>
@@ -188,24 +166,10 @@ export function metadataToOpenSeaMetadata(metadata: Metadata): OpenSeaMetadata {
         name: metadata.name,
         description: metadata.description,
         image: metadata.image,
-        external_url: metadata.externalUrl,
         animation_url: metadata.animationUrl,
         iframe_url: metadata.animationUrl,
-        attributes: [],
+        attributes: metadata.attributes,
     };
-
-    for (const network in metadata.txnCounts) {
-        const txnCounts = metadata.txnCounts[network];
-        for (const key in txnCounts) {
-            const value = txnCounts[key];
-            if (value) {
-                openseaMetadata.attributes.push({
-                    trait_type: titleCaseEveryWord(`${network} ${ccTohr(key)}`),
-                    value: Number(value),
-                });
-            }
-        }
-    }
 
     return openseaMetadata;
 }

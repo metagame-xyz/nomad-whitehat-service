@@ -1,13 +1,17 @@
+import axios, { AxiosResponse } from 'axios';
+
 import { getUserName, ioredisClient } from '@utils';
 import {
     formatMetadataWithOldMetadata,
     formatNewMetadata,
+    generateNewMetadata,
     getTxnData,
     Metadata,
     TxnCounts,
 } from '@utils/metadata';
 import { generateGIFWithUrlbox } from '@utils/urlbox';
 
+import { METABOT_BASE_API_URL } from './constants';
 import { LogData, logError, logSuccess } from './logging';
 
 export type newNftResponse = {
@@ -17,11 +21,7 @@ export type newNftResponse = {
     ensName: string;
 };
 
-export async function addOrUpdateNft(
-    minterAddress: string,
-    tokenId: string,
-    forceCount = false,
-): Promise<newNftResponse> {
+export async function addMetadata(minterAddress: string, tokenId: string): Promise<newNftResponse> {
     const address = minterAddress.toLowerCase();
     console.log('add or update', address, tokenId);
 
@@ -33,33 +33,42 @@ export async function addOrUpdateNft(
         wallet_address: address,
     };
 
-    /****************/
-    /* GET TXN DATA */
-    /****************/
-    let txnCounts: TxnCounts;
     let userName: string;
     try {
         logData.third_party_name = 'getTxnData';
-        txnCounts = await getTxnData(address, tokenId);
 
         logData.third_party_name = 'ethers getUserName';
         userName = await getUserName(address);
 
         logData.third_party_name = 'redis';
         const oldMetadata: Metadata = JSON.parse(await ioredisClient.hget(tokenId, 'metadata'));
-        const firstTime = !oldMetadata;
-
-        let metadata = firstTime
-            ? formatNewMetadata(address, txnCounts, userName, tokenId)
-            : formatMetadataWithOldMetadata(oldMetadata, txnCounts, userName);
-
-        if (forceCount) {
-            metadata.txnCounts.ethereum.transactionsYesterday += 1;
-            metadata.txnCounts.ethereum.transactionsLastWeek += 1;
-            metadata.txnCounts.ethereum.transactionsLastMonth += 1;
-            metadata.txnCounts.ethereum.totalTransactions += 1;
+        if (oldMetadata) {
+            // Should never happen in production
+            return {
+                tokenId,
+                minterAddress: address,
+                userName,
+                ensName: userName,
+            };
         }
-        console.log('set it', metadata);
+
+        let returnedEverything;
+        let tokensReturned;
+        try {
+            const response = await axios.get(
+                `${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}?needs_signature=no`,
+            );
+            const { data } = response as AxiosResponse;
+            returnedEverything = data.returnedEverything;
+            tokensReturned = data.tokensReturned;
+        } catch (err) {
+            logError(logData, err);
+            returnedEverything = false;
+            tokensReturned = {};
+        }
+
+        let metadata = generateNewMetadata(address, userName, returnedEverything, tokensReturned);
+
         await ioredisClient.hset(address, { tokenId, metadata: JSON.stringify(metadata) });
         await ioredisClient.hset(tokenId, { address: address, metadata: JSON.stringify(metadata) });
 
@@ -71,8 +80,6 @@ export async function addOrUpdateNft(
             ensName: userName,
         };
     } catch (error) {
-        console.log('add/update error', address, tokenId);
-
         logError(logData, error);
         throw error;
     }

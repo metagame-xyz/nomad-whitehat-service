@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { isValidEventForwarderSignature } from '@utils';
-import { addOrUpdateNft } from '@utils/addOrUpdateNft';
+import { addMetadata } from '@utils/addMetadata';
 import { LogData, logError, logSuccess } from '@utils/logging';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     try {
-        const result = await addOrUpdateNft(address, tokenId, true);
+        const result = await addMetadata(address, tokenId);
 
         logSuccess(logData);
         res.status(200).send({

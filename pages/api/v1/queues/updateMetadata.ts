@@ -1,6 +1,6 @@
 import { Queue } from 'quirrel/next';
 
-import { addOrUpdateNft } from '@utils/addOrUpdateNft';
+import { addOrUpdateNft } from '@utils/addMetadata';
 import { LogData, logError, logSuccess } from '@utils/logging';
 import { getAddressForTokenId } from '@utils/metadata';
 
