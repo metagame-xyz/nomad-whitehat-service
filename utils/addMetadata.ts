@@ -30,16 +30,16 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
         userName = await getUserName(address);
 
         logData.third_party_name = 'redis get metadata';
-        const oldMetadata: Metadata = JSON.parse(await ioredisClient.hget(tokenId, 'metadata'));
-        if (oldMetadata) {
-            // Should never happen in production
-            return {
-                tokenId,
-                minterAddress: address,
-                userName,
-                ensName: userName,
-            };
-        }
+        // const oldMetadata: Metadata = JSON.parse(await ioredisClient.hget(tokenId, 'metadata'));
+        // if (oldMetadata) {
+        //     // Should never happen in production
+        //     return {
+        //         tokenId,
+        //         minterAddress: address,
+        //         userName,
+        //         ensName: userName,
+        //     };
+        // }
 
         logData.third_party_name = 'get whitehat data';
         let returnedEverything;

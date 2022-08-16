@@ -5,7 +5,6 @@ import { addMetadata } from '@utils/addMetadata';
 import { LogData, logError, logSuccess } from '@utils/logging';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('tokenId:', req.body.tokenId);
     if (req.method !== 'POST') {
         return res.status(404).send({});
     }
