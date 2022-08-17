@@ -46,7 +46,7 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
         let tokensReturned;
         try {
             const response = await axios.get(
-                `${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}?needs_signature=no`,
+                `${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`,
             );
             const { data } = response as AxiosResponse;
             returnedEverything = data.returnedEverything;
