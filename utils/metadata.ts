@@ -86,11 +86,11 @@ export type SingleNetworkTxnCounts = {
 
 export interface GenericAttribute {
     trait_type: string;
-    value: number;
+    value: string;
 }
 
 export interface ReturnedEverythingAttribute {
-    value: 'Returned everything';
+    value: 'Returned 100%';
 }
 
 export type Attributes = (GenericAttribute | ReturnedEverythingAttribute)[];
@@ -126,16 +126,19 @@ export const formatNewMetadata = (
 ): Metadata => {
     const attributes: Attributes = [];
     if (returnedEverything) {
-        attributes.push({ value: 'Returned everything' });
+        attributes.push({ value: 'Returned 100%' });
     }
     Object.entries(tokensReturned).forEach(([symbol, amount]) => {
-        attributes.push({ trait_type: `${symbol} returned`, value: amount });
+        attributes.push({
+            trait_type: `${symbol} returned`,
+            value: (Math.round(amount * 100) / 100).toString(),
+        });
     });
     const metadata: Metadata = {
         name: `${userName}'s Whitehat`,
         description: 'Thank you from all of us', // TODO
-        image: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`, //gif
-        animationUrl: `ipfs://QmeUbxuhPA6ZbQUrtDG2gULQ2G7374PL5x6kEjDw225A3n`, //mp4
+        image: `ipfs://QmQ5ot2kS7hA29nahqJU16wPd73DdYje6vtjYdThUaazsc`, // mp4
+        animationUrl: `ipfs://QmQ5ot2kS7hA29nahqJU16wPd73DdYje6vtjYdThUaazsc`, //mp4
         address: minterAddress,
         attributes,
     };
