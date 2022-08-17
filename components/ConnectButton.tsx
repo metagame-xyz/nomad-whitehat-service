@@ -10,7 +10,6 @@ const CustomConnectButton = ({ isNavbar = false }) => {
             {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
                 return (
                     <div
-                        {...(!isNavbar && { style: { width: '90%' } })}
                         {...(!mounted && {
                             'aria-hidden': true,
                             style: {
