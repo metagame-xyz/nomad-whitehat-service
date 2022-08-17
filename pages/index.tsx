@@ -4,6 +4,7 @@ import {
     Button,
     Flex,
     Heading,
+    HStack,
     Image,
     Link,
     SimpleGrid,
@@ -26,6 +27,7 @@ import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagm
 import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
 import CustomConnectButton from '@components/ConnectButton';
+import { Etherscan, Opensea } from '@components/Icons';
 import { maxW } from '@components/Layout';
 import MintButton, { MintStatus } from '@components/MintButton';
 
@@ -207,15 +209,11 @@ const Home = ({ metadata }) => {
         }
     };
 
-    const textUnderButton = () => {
-        if (userTokenId || !address) {
-            return <></>;
-            // } else if (freeMintsLeft === null || freeMintsLeft > 0) {
-            //     return (
-            //         <Text fontWeight="light" fontSize={['2xl', '3xl']} color="white">
-            //             {`${freeMintsLeft || '?'}/${freeMints} free mints left`}
-            //         </Text>
-            //     );
+    const textAboveButton = () => {
+        if (!address) {
+            return "Connect your wallet to see if you're eligible.";
+        } else if (mintStatus === MintStatus.can_mint) {
+            return "Congratulations! You're eligible.";
         } else {
             return (
                 <div>
@@ -260,44 +258,115 @@ const Home = ({ metadata }) => {
     }
 
     return (
-        <Box align="center">
-            <Image
-                src={`/static/assets/thankYou${thankYouAssetSize}.svg`}
-                alt="Thank you from all of us."
-                width="100%"
-                pt="20"
-                pb="20"
-            />
-            <Flex direction={['column', 'row']} w={['xs', 'sm', 'md', '5xl']} spacing={5}>
-                <Flex direction="column" align="flex-start" w={['100%', '60%']}>
+        <Box align="center" backgroundImage={`url("/static/assets/gridBackground.svg") !important`}>
+            <Text color="white" fontSize="xl" as="u" textAlign="left">
+                <Box w="100%" p={10}>
+                    <Link href="https://themetagame.xyz" target="_blank">
+                        Built by Metagame
+                    </Link>
+                </Box>
+            </Text>
+            <Flex direction={['column', 'row']} w={['xs', 'sm', 'md', '5xl']} spacing={5} mt={20}>
+                <Flex direction="column" align="flex-start" w={['100%', '50%']} minW="50%">
+                    <Flex width="100%" bgColor="rgba(0, 0, 0, 0)" boxShadow="md"></Flex>
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
                     <Text fontSize={['4xl', '7xl']}>{copy.heading1}</Text>
-                    <Text fontSize="lg" align="left">
+                    {thankYouAssetSize === 'Large' ? (
+                        <Flex
+                            direction="column"
+                            spacing={10}
+                            align="center"
+                            pl={[0, 20]}
+                            mt={[10, 0]}>
+                            <Image
+                                borderRadius={50}
+                                src={`/static/assets/whitehat.svg`}
+                                alt="White hat NFT preview"
+                            />
+                        </Flex>
+                    ) : null}
+                    <Text fontSize="lg" align="left" mt={10}>
                         {copy.text1}
                     </Text>
-                </Flex>
-                <Flex direction="column" spacing={10} align="center" px={[4, 20]} mt={[10, 0]}>
-                    <Image src={`/static/assets/robloxHat.svg`} alt="White hat NFT preview" />
-                    <VStack justifyContent="center" spacing={4} w="100%">
+                    <Text fontSize="lg" align="left" mt={10}>
+                        {copy.text2}
+                    </Text>
+                    <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10}>
+                        {textAboveButton()}
+                    </Text>
+                    <HStack
+                        justifyContent={['center', 'start']}
+                        alignItems="center"
+                        spacing={4}
+                        w="100%"
+                        mt={10}>
                         {!address ? <CustomConnectButton /> : null}
                         {mintStatus !== MintStatus.unknown && (
                             <MintButton mintStatus={mintStatus} action={mintButtonAction} />
                         )}
-                        {textUnderButton()}
-                    </VStack>
+                        {thankYouAssetSize !== 'Large' ? (
+                            <>
+                                <Etherscan />
+                                <Opensea />
+                            </>
+                        ) : null}
+                    </HStack>
                 </Flex>
+
+                {thankYouAssetSize !== 'Large' ? (
+                    <Flex direction="column" spacing={10} align="center" pl={[0, 20]} mt={[10, 0]}>
+                        <Image
+                            borderRadius={50}
+                            src={`/static/assets/whitehat.svg`}
+                            alt="White hat NFT preview"
+                        />
+                    </Flex>
+                ) : null}
             </Flex>
             <Image
                 src={`/static/assets/thankYou${thankYouAssetSize}.svg`}
                 alt="Thank you from all of us."
                 width="100%"
                 pt="20"
-                pb="20"
+                pb="5"
             />
 
             <Head>
                 <title>{copy.title}</title>
             </Head>
+            <Box
+                align="center"
+                backgroundImage={`url("/static/assets/forefrontBackground.svg") !important`}
+                backgroundPosition={'center center'}
+                py={100}>
+                <Text fontSize={['md', 'lg']} mb={[3, 5]}>
+                    {copy.forefront}
+                </Text>
+                <Image
+                    src={`/static/assets/forefrontLogo.svg`}
+                    alt="Mountains"
+                    fit="fill"
+                    maxW="90%"
+                    mb={[3, 5]}
+                />
+                <Box
+                    as="button"
+                    onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
+                    type="button"
+                    borderRadius={'xl'}
+                    borderColor="white"
+                    borderWidth="1px"
+                    px={8}
+                    py={4}
+                    mt={4}
+                    _hover={{
+                        background: 'rgba(255, 255, 255, 0.3)',
+                    }}>
+                    <Heading as="p" size={'lg'} color="white" fontWeight="400">
+                        {copy.forefrontCta}
+                    </Heading>
+                </Box>
+            </Box>
             <Box px={8} py={20} bgColor="white">
                 <Box w={['xs', 'sm', 'md', '5xl']}>
                     <Heading
