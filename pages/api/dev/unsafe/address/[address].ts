@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let metadata: Metadata;
     try {
         const userName = await getUserName(address);
-        metadata = formatNewMetadata(address, userName, false, {});
+        metadata = formatNewMetadata(address, userName, false, {}, false);
     } catch (error) {
         console.log(error);
         logError(logData, error);
