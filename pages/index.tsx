@@ -305,18 +305,26 @@ const Home = ({ metadata }) => {
                     </HStack>
                 </HStack>
             </HStack>
-            <Flex direction={['column', 'row']} w={['xs', 'sm', 'md', '5xl']} spacing={5} mt={20}>
-                <Flex direction="column" align="flex-start" w={['100%', '50%']} minW="50%">
+            <Flex
+                direction={['column', 'column', 'column', 'row']}
+                w={['xs', 'sm', 'md', '5xl']}
+                spacing={5}
+                mt={20}>
+                <Flex
+                    direction="column"
+                    align="flex-start"
+                    w={['100%', '100%', '100%', '50%']}
+                    minW="50%">
                     <Flex width="100%" bgColor="rgba(0, 0, 0, 0)" boxShadow="md"></Flex>
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
-                    <Text fontSize={['4xl', '7xl']}>{copy.heading1}</Text>
+                    <Text fontSize={['4xl', '4xl', '6xl', '7xl']}>{copy.heading1}</Text>
                     {thankYouAssetSize === 'Large' ? (
                         <Flex
                             direction="column"
                             spacing={10}
                             align="center"
-                            pl={[0, 20]}
-                            mt={[10, 0]}>
+                            pl={[0, 0, 0, 20]}
+                            mt={[10, 10, 10, 0]}>
                             <Image
                                 borderRadius={50}
                                 src={`/static/assets/whitehat.svg`}
@@ -332,7 +340,7 @@ const Home = ({ metadata }) => {
                     </Text>
                     {textAboveButton()}
                     <VStack
-                        justifyContent={['center', 'start']}
+                        justifyContent={['center', 'center', 'center', 'start']}
                         alignItems="left"
                         spacing={4}
                         w="100%"
@@ -345,7 +353,12 @@ const Home = ({ metadata }) => {
                 </Flex>
 
                 {thankYouAssetSize !== 'Large' ? (
-                    <Flex direction="column" spacing={10} align="center" pl={[0, 20]} mt={[10, 0]}>
+                    <Flex
+                        direction="column"
+                        spacing={10}
+                        align="center"
+                        pl={[0, 0, 0, 20]}
+                        mt={[10, 10, 10, 0]}>
                         <Image
                             borderRadius={50}
                             src={`/static/assets/whitehat.svg`}
@@ -402,7 +415,7 @@ const Home = ({ metadata }) => {
                 <Box w={['xs', 'sm', 'md', '5xl']}>
                     <Heading
                         as="h1"
-                        fontSize={['20', '24', '36']}
+                        fontSize={['20', '20', '28', '36']}
                         textAlign="center"
                         textColor="brand.900">
                         {copy.bottomSectonHeading}
