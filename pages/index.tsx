@@ -308,13 +308,6 @@ const Home = ({ metadata }) => {
                     </Text>
                     <Box
                         as="button"
-                        disabled={
-                            ![
-                                MintStatus.can_mint,
-                                MintStatus.processing,
-                                MintStatus.minted,
-                            ].includes(mintStatus)
-                        }
                         onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
                         type="button"
                         bgColor="white"

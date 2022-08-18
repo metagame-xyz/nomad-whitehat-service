@@ -22,8 +22,8 @@ export const copy = {
     heroSubheading: description,
     heading1: 'White Hat Prize',
     text1: `Reputation and contribution are the lifeblood of a sustainable crypto
-                        revolution. We&apos;re here to offer our thanks to anyone who returns 90% or
-                        more of their withdrawal from the Nomad Bridge during the Bridge hack Claim
+                        revolution. We're here to offer our thanks to anyone who returns 90% or
+                        more of their withdrawal from the Nomad Bridge during the Bridge hack. Claim
                         an NFT endorsed by Nomad that proves your on-chain return of 90%+ funds
                         after your withdrawal.`,
     heading2: 'Multi-chain',
