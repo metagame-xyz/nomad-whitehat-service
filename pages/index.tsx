@@ -420,12 +420,23 @@ const Home = ({ metadata }) => {
                         textColor="brand.900">
                         {copy.bottomSectonHeading}
                     </Heading>
-                    <Text mt={4} textColor="brand.900" textAlign="left" fontSize={['lg', 'xl']}>
+                    <Text
+                        mt={[12, 12, 12, 16]}
+                        textColor="brand.900"
+                        textAlign="left"
+                        fontSize={['lg', 'xl']}>
                         {copy.bottomSectionText}
+                    </Text>
+                    <Text
+                        mt={[8, 8, 8, 12]}
+                        textColor="brand.900"
+                        textAlign="left"
+                        fontSize={['lg', 'xl']}>
+                        {copy.bottomSectionText2}
                     </Text>
                     <BigButton
                         onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
-                        mt={4}
+                        mt={[8, 8, 8, 12]}
                         bgColor="white"
                         _hover={{
                             background: 'rgba(0, 0, 0, 0.1)',
