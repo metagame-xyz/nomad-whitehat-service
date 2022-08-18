@@ -26,7 +26,7 @@ function Navbar(props) {
     const showName = useBreakpointValue({ base: false, md: true });
 
     return (
-        <Flex width="100%" bgColor="brand.900" boxShadow="md">
+        <Flex width="100%" bgColor="rgba(0, 0, 0, 0)" boxShadow="md">
             <HStack
                 as="nav"
                 width="100%"

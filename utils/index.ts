@@ -96,4 +96,6 @@ export const getUserName = async (address: string, provider = defaultMainnetProv
     let ensName = null;
     ensName = await provider.lookupAddress(address);
     return ensName || address.substr(0, 6);
+
+    // TODO: use onoma if ens fails
 };
