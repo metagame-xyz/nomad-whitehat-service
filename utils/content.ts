@@ -20,6 +20,7 @@ export const copy = {
     title: 'Nomad whitehat',
     heroSubheading: description,
     nameLowercase: 'nomad whitehat',
+    metagamePlug: 'Powered by Metagame',
     heading1: 'Whitehat Prize',
     text1: `Reputation and contribution are the lifeblood of a sustainable crypto revolution. We're offering a big thank-you to everyone who returned 90% or more of their withdrawal from the Nomad Bridge during the Bridge hack`,
     text2: `Now, claim your NFT endorsed by Nomad that proves your on-chain return of 90%+ funds.`,
