@@ -21,6 +21,7 @@ export const copy = {
     heroSubheading: description,
     nameLowercase: 'nomad whitehat',
     metagamePlug: 'Powered by Metagame',
+
     heading1: 'Whitehat Prize',
     text1: `Reputation and contribution are the lifeblood of a sustainable crypto revolution. We're offering a big thank-you to everyone who returned 90% or more of their withdrawal from the Nomad Bridge during the Bridge hack`,
     text2: `Now, claim your NFT endorsed by Nomad that proves your on-chain return of 90%+ funds.`,
@@ -29,5 +30,6 @@ export const copy = {
     bottomSectonHeading: 'EARNED NFTS ARE THE FUTURE',
     bottomSectionText: `EEarned NFTs reward and recognize the best in crypto communities, granting them access, permissions and status that can’t be bought. They crystallize our achievements, contributions and help others know who is more trustworthy, more knowledgeable, and more helpful.`,
     bottomSectionText2: `Interested in bringing these to your community?`,
+
     metagameCta: 'Play the game',
 };

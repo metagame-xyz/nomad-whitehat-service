@@ -318,6 +318,7 @@ const Home = ({ metadata }) => {
                     <Flex width="100%" bgColor="rgba(0, 0, 0, 0)" boxShadow="md"></Flex>
                     <Image src={`/static/assets/nomadLogo.svg`} alt="Nomad" />
                     <Text fontSize={['4xl', '4xl', '6xl', '7xl']}>{copy.heading1}</Text>
+
                     {thankYouAssetSize === 'Large' ? (
                         <Flex
                             direction="column"
