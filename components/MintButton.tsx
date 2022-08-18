@@ -1,6 +1,8 @@
 import { Box, Button, Heading } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
+import BigButton from './BigButton';
+
 export const enum MintStatus {
     unknown = 'unknown',
     loading = 'Loading...',
@@ -8,29 +10,18 @@ export const enum MintStatus {
     minting = 'Minting...',
     minted = 'See your NFT',
     not_whitehat = 'Not a whitehat',
-    processing = 'Processing...',
+    error = 'Get help',
 }
 
 const MintButton = ({ mintStatus, action = (a) => a }) => (
-    <Box
-        as="button"
-        disabled={
-            ![MintStatus.can_mint, MintStatus.processing, MintStatus.minted].includes(mintStatus)
-        }
+    <BigButton
+        disabled={![MintStatus.can_mint, MintStatus.error, MintStatus.minted].includes(mintStatus)}
         onClick={action}
-        type="button"
-        bgColor="white"
-        borderRadius={'xl'}
-        px={8}
-        py={4}
-        w="100%"
+        label={mintStatus}
         _hover={{
-            background: '#e8e8e8',
-        }}>
-        <Heading as="p" size={'lg'} color="brand.800" fontWeight="400">
-            {mintStatus}
-        </Heading>
-    </Box>
+            background: 'rgba(255, 255, 255, 0.7)',
+        }}
+    />
 );
 
 export default MintButton;
