@@ -294,11 +294,11 @@ const Home = ({ metadata }) => {
                 </HStack>
 
                 <HStack>
-                    {thankYouAssetSize !== 'Large' ? <CustomConnectButton isNavbar /> : null}
                     <HStack>
                         <Etherscan />
                         <Opensea />
                     </HStack>
+                    {thankYouAssetSize !== 'Large' ? <CustomConnectButton isNavbar /> : null}
                 </HStack>
             </HStack>
             <Flex
