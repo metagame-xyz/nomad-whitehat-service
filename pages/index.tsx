@@ -439,6 +439,7 @@ const Home = ({ metadata }) => {
                             background: 'rgba(0, 0, 0, 0.1)',
                         }}
                         label={copy.metagameCta}
+                        maxW="400px"
                     />
                 </Box>
             </Box>
