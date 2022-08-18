@@ -136,9 +136,11 @@ export const formatNewMetadata = (
     });
     const metadata: Metadata = {
         name: `${userName}'s Whitehat`,
-        description: 'Thank you from all of us', // TODO
+        description: 'Thank you from all of us',
         image: `ipfs://QmQ5ot2kS7hA29nahqJU16wPd73DdYje6vtjYdThUaazsc`, // mp4
-        animationUrl: `ipfs://QmQ5ot2kS7hA29nahqJU16wPd73DdYje6vtjYdThUaazsc`, //mp4
+        animationUrl: returnedEverything
+            ? `ipfs://QmStPvR53sm14WJGA5WKYZ65TKKjnAvY4fHERFLUqjCjAt`
+            : `ipfs://QmQ5ot2kS7hA29nahqJU16wPd73DdYje6vtjYdThUaazsc`, //mp4
         address: minterAddress,
         attributes,
     };

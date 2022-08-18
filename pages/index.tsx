@@ -123,12 +123,12 @@ const Home = ({ metadata }) => {
                     const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     // TODO: uncomment these next parts
                     if (event) {
-                        // tokenId = event.args[2].toNumber();
-                        // localMintStatus = MintStatus.minted;
+                        tokenId = event.args[2].toNumber();
+                        localMintStatus = MintStatus.minted;
                     }
                 }
 
-                if (address /* && localMintStatus !== MintStatus.minted*/) {
+                if (address && localMintStatus !== MintStatus.minted) {
                     axios
                         .get(`${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`)
                         .then(({ data }) => {
@@ -233,9 +233,9 @@ const Home = ({ metadata }) => {
                 <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'orange'}>
                     Looks like you either didn&apos;t participate in the Nomad bridge event, or
                     haven&apos;t returned enough funds to qualify for the White Hat. If you think
-                    this message is in error, please get help{' '}
-                    <Link as="u" href="themetagame.xyz">
-                        here
+                    this message is in error, please contact{' '}
+                    <Link as="u" href="mailto:recovery@nomad.xyz">
+                        recovery@nomad.xyz
                     </Link>
                     .
                 </Text>
@@ -243,10 +243,11 @@ const Home = ({ metadata }) => {
         } else if (mintStatus === MintStatus.error) {
             return (
                 <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'red'}>
-                    Oops! Looks like something went wrong on our end. Try reloading the page or get
-                    help{' '}
-                    <Link as="u" href="themetagame.xyz">
-                        here
+                    Oops! Looks like something went wrong on our end. Try reloading the page or{' '}
+                    <Link
+                        as="u"
+                        href="https://twitter.com/messages/compose?recipient_id=1453867148514926600">
+                        contact us
                     </Link>
                     .
                 </Text>
