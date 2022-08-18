@@ -23,7 +23,6 @@ export default function Footer(props) {
                     align="center"
                     justify="start">
                     <TwelveCircles boxSize={8} color="white" />
-                    {/* pt=1 cuz this font sits too high */}
                     <Heading pt={1} fontSize={['sm', 'md', 'xl', 'xl']}>
                         Metagame
                     </Heading>

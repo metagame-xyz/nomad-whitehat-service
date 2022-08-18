@@ -28,7 +28,7 @@ import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
 import BigButton from '@components/BigButton';
 import CustomConnectButton from '@components/ConnectButton';
-import { Etherscan, Opensea } from '@components/Icons';
+import { Etherscan, Opensea, TwelveCircles } from '@components/Icons';
 import { maxW } from '@components/Layout';
 import MintButton, { MintStatus } from '@components/MintButton';
 
@@ -287,11 +287,12 @@ const Home = ({ metadata }) => {
     return (
         <Box align="center" backgroundImage={`url("/static/assets/gridBackground.svg") !important`}>
             <HStack w="100%" p={10} justify="space-between" direction="row">
-                <Text color="white" fontSize="xl" as="u" textAlign="left">
-                    <Link href="https://themetagame.xyz" target="_blank">
+                <HStack onClick={() => window.open('https://themetagame.xyz', '_blank')}>
+                    <Link color="white" fontSize="xl" textAlign="left">
                         {copy.metagamePlug}
                     </Link>
-                </Text>
+                    {thankYouAssetSize !== 'Large' && <TwelveCircles boxSize={8} color="white" />}
+                </HStack>
 
                 <HStack>
                     {thankYouAssetSize !== 'Large' ? <CustomConnectButton isNavbar /> : null}
