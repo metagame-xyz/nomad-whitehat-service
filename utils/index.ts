@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import Redis from 'ioredis';
 import type { NextApiRequest } from 'next';
 import fetch from 'node-fetch-retry';
+import { addressToName, addressToNameObject } from 'onoma';
 
 // import fetch, { Response } from 'node-fetch';
 import { logger } from '@utils/logging';
@@ -95,7 +96,6 @@ export const formatDateObjToTime = (dateObj: Record<string, number>): string => 
 export const getUserName = async (address: string, provider = defaultMainnetProvider) => {
     let ensName = null;
     ensName = await provider.lookupAddress(address);
-    return ensName || address.substr(0, 6);
-
-    // TODO: use onoma if ens fails
+    if (ensName) return ensName;
+    return addressToName(address);
 };
