@@ -12,7 +12,7 @@ import heartbeat from '../../../../heartbeat.json';
 const jobSpacingInSeconds = 15;
 
 export default CronJob(
-    'api/v1/cronJobs/batchFetchMetadata', // 👈 the route it's reachable on
+    'api/cronJobs/batchFetchMetadata', // 👈 the route it's reachable on
     ['0 3 * * *', 'America/Chicago'], // 👈 the cron schedule
     async () => {
         const logData: LogData = {
