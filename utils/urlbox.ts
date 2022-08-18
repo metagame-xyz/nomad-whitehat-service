@@ -30,7 +30,7 @@ export async function getTokenIdByRenderId(renderId: string): Promise<string> {
 export async function generateGIFWithUrlbox(tokenId: string, timer = false): Promise<any> {
     const env = process.env.VERCEL_ENV === 'production' ? 'heartbeat' : 'heartbeat-dev';
     const url = `https://${env}.themetagame.xyz/generateGif/${tokenId}`;
-    const loggerUrl = `https://${env}.themetagame.xyz/api/v1/webhooks/urlboxLogger`;
+    const loggerUrl = `https://${env}.themetagame.xyz/api/webhooks/urlboxLogger`;
 
     // const urlbox = Urlbox(URLBOX_API_KEY, URL_BOX_API_SECRET);
     const baseParams = {
@@ -65,7 +65,7 @@ export async function generateGIFWithUrlbox(tokenId: string, timer = false): Pro
         },
     };
 
-    const urlboxPostUrl = `https://api.urlbox.io/v1/render`;
+    const urlboxPostUrl = `https://api.urlbox.io/render`;
 
     const logData: LogData = {
         level: 'info',

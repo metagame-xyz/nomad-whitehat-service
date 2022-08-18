@@ -2,6 +2,8 @@ import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React, { useState } from 'react';
 
+import BigButton from './BigButton';
+
 const CustomConnectButton = ({ isNavbar = false }) => {
     const [connectLabel, setConnectLabel] = useState('Connect wallet');
     const [displayName, setDisplayName] = useState('');
@@ -21,26 +23,16 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                         {(() => {
                             if (!mounted || !account || !chain) {
                                 return (
-                                    <Box
-                                        as="button"
+                                    <BigButton
                                         onClick={openConnectModal}
-                                        type="button"
-                                        bgColor="white"
-                                        borderRadius={'xl'}
+                                        _hover={{
+                                            background: 'rgba(255, 255, 255, 0.7)',
+                                        }}
+                                        label="Connect Wallet"
                                         px={isNavbar ? 4 : 8}
                                         py={isNavbar ? 3 : 4}
-                                        w="100%"
-                                        _hover={{
-                                            background: '#e8e8e8',
-                                        }}>
-                                        <Heading
-                                            as="p"
-                                            size={isNavbar ? 'sm' : 'lg'}
-                                            fontWeight="400"
-                                            color="brand.800">
-                                            Connect Wallet
-                                        </Heading>
-                                    </Box>
+                                        textSize={isNavbar ? 'sm' : 'lg'}
+                                    />
                                 );
                             }
 
@@ -57,11 +49,15 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                                     <Button
                                         onClick={openAccountModal}
                                         type="button"
-                                        fontWeight="400">
-                                        {account.displayName}
-                                        {account.displayBalance
-                                            ? ` (${account.displayBalance})`
-                                            : ''}
+                                        fontWeight="400"
+                                        w="100%"
+                                        bgColor={!isNavbar ? 'rgba(255, 255, 255, 0.5)' : 'white'}>
+                                        <Text color="brand.900">
+                                            {account.displayName}
+                                            {account.displayBalance
+                                                ? ` (${account.displayBalance})`
+                                                : ''}
+                                        </Text>
                                     </Button>
                                 </div>
                             );
