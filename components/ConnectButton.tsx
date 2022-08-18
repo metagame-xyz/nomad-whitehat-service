@@ -51,6 +51,9 @@ const CustomConnectButton = ({ isNavbar = false }) => {
                                         type="button"
                                         fontWeight="400"
                                         w="100%"
+                                        _hover={{
+                                            background: 'rgba(255, 255, 255, 0.7)',
+                                        }}
                                         bgColor={!isNavbar ? 'rgba(255, 255, 255, 0.5)' : 'white'}>
                                         <Text color="brand.900">
                                             {account.displayName}

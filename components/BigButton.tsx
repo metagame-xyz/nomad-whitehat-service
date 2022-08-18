@@ -28,7 +28,8 @@ const BigButton = ({
                 as="p"
                 size={textSize}
                 color={!disabled ? textColor : '#696969'}
-                fontWeight="400">
+                fontWeight="400"
+                outline="none">
                 {label}
             </Heading>
         </Box>
