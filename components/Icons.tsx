@@ -11,6 +11,7 @@ function IconLink({ Icon, url, ...props }) {
                 boxSize={[8, 8, 10, 10]}
                 borderRadius={'50%'}
                 boxShadow={'1px 1px 2px #888'}
+                outline={'none'}
                 _hover={{ color: 'brand.600' }}
                 {...props}
             />

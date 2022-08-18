@@ -27,7 +27,7 @@ export const copy = {
     forefront: 'EVERY WHITEHAT CAN CLAIM 100 $FF FROM',
     forefrontCta: 'Claim',
     bottomSectonHeading: 'EARNED NFTS ARE THE FUTURE',
-    bottomSectionText: `EEarned NFTs reward and recognize the best in crypto communities, granting them access, permissions and status that can’t be bought. They crystallize our achievements, contributions and help others know who is more trustworthy, more knowledgeable, and more helpful.`,
+    bottomSectionText: `EEarned NFTs reward and recognize the best in crypto communities, granting them access, permissions and status that can't be bought. They crystallize our achievements, contributions and help others know who is more trustworthy, more knowledgeable, and more helpful.`,
     bottomSectionText2: `Interested in bringing these to your community?`,
     metagameCta: 'Play the game',
 };
