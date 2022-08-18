@@ -109,7 +109,6 @@ const Home = ({ metadata }) => {
 
     useEffect(() => {
         async function getUserMintedTokenId() {
-            // userAddress has changed. TokenId defaults to null
             let tokenId = null;
             let allowlist = false;
             let signature = { v: null, r: null, s: null };
