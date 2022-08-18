@@ -26,6 +26,7 @@ import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagm
 
 import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
+import BigButton from '@components/BigButton';
 import CustomConnectButton from '@components/ConnectButton';
 import { Etherscan, Opensea } from '@components/Icons';
 import { maxW } from '@components/Layout';
@@ -36,6 +37,7 @@ import {
     blackholeAddress,
     CONTRACT_ADDRESS,
     METABOT_BASE_API_URL,
+    NETWORK,
     networkStrings,
     WEBSITE_URL,
 } from '@utils/constants';
@@ -121,25 +123,23 @@ const Home = ({ metadata }) => {
                     const [event] = await contract.queryFilter(filter); // get first event, should only be one
                     // TODO: uncomment these next parts
                     if (event) {
-                        // tokenId = event.args[2].toNumber();
-                        // localMintStatus = MintStatus.minted;
+                        tokenId = event.args[2].toNumber();
+                        localMintStatus = MintStatus.minted;
                     }
                 }
 
-                if (address /* && localMintStatus !== MintStatus.minted*/) {
+                if (address && localMintStatus !== MintStatus.minted) {
                     axios
                         .get(`${METABOT_BASE_API_URL}nomadWhitehatCheck/${address}`)
                         .then(({ data }) => {
                             localMintStatus = MintStatus.can_mint;
                             setExpandedSignature(data.signature);
                         })
-                        .catch(({ response }) => {
-                            const { errorCode } = response?.data;
-                            if (errorCode === 1) {
+                        .catch((err) => {
+                            if (err.response?.data?.errorCode === 1) {
                                 localMintStatus = MintStatus.not_whitehat;
-                            } else if (errorCode === 2) {
-                                localMintStatus = MintStatus.processing;
-                                setShowProcessingModal(true);
+                            } else {
+                                localMintStatus = MintStatus.error;
                             }
                         })
                         .finally(() => {
@@ -211,22 +211,48 @@ const Home = ({ metadata }) => {
 
     const textAboveButton = () => {
         if (!address) {
-            return "Connect your wallet to see if you're eligible.";
-        } else if (mintStatus === MintStatus.can_mint) {
-            return "Congratulations! You're eligible.";
-        } else {
             return (
-                <div>
-                    <Text fontWeight="light" fontSize={['xl', '2xl']} color="white">
-                        Free to mint
-                    </Text>
-                    {mintCount && (
-                        <Text fontWeight="light" fontSize={['sm', 'md']} color="white">
-                            {`${mintCount} ${copy.title}s have been minted`}
-                        </Text>
-                    )}
-                </div>
+                <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'white'}>
+                    Connect your wallet to see if you&apos;re eligible.
+                </Text>
             );
+        } else if (mintStatus === MintStatus.can_mint) {
+            return (
+                <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'white'}>
+                    Congratulations! You&apos;re a whitehat.
+                </Text>
+            );
+        } else if (mintStatus === MintStatus.minted) {
+            return (
+                <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'green'}>
+                    You&apos;ve minted your whitehat! Thank you again
+                </Text>
+            );
+        } else if (mintStatus === MintStatus.not_whitehat) {
+            return (
+                <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'orange'}>
+                    Looks like you either didn&apos;t participate in the Nomad bridge event, or
+                    haven&apos;t returned enough funds to qualify for the White Hat. If you think
+                    this message is in error, please get help{' '}
+                    <Link as="u" href="themetagame.xyz">
+                        here
+                    </Link>
+                    .
+                </Text>
+            );
+        } else if (mintStatus === MintStatus.error) {
+            return (
+                <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'red'}>
+                    Oops! Looks like something went wrong on our end. Try reloading the page or get
+                    help{' '}
+                    <Link as="u" href="themetagame.xyz">
+                        here
+                    </Link>
+                    .
+                </Text>
+            );
+        } else {
+            return <></>;
         }
     };
 
@@ -235,12 +261,17 @@ const Home = ({ metadata }) => {
         case MintStatus.can_mint:
             mintButtonAction = () => mint();
             break;
-        case MintStatus.processing:
-            mintButtonAction = () => setShowProcessingModal(true);
+        case MintStatus.error:
+            mintButtonAction = () => {};
             break;
         case MintStatus.minted:
             mintButtonAction = () => {
-                window.open(`/logbook/${userTokenId}`, '_blank');
+                window.open(
+                    `https://${NETWORK === 'rinkeby' ? 'testnets.' : ''}opensea.io/assets/${
+                        NETWORK === 'rinkeby' ? 'rinkeby' : 'ethereum'
+                    }/${CONTRACT_ADDRESS}/${userTokenId}`,
+                    '_blank',
+                );
             };
         case MintStatus.unknown:
         default:
@@ -259,13 +290,21 @@ const Home = ({ metadata }) => {
 
     return (
         <Box align="center" backgroundImage={`url("/static/assets/gridBackground.svg") !important`}>
-            <Text color="white" fontSize="xl" as="u" textAlign="left">
-                <Box w="100%" p={10}>
+            <HStack w="100%" p={10} justify="space-between" direction="row">
+                <Text color="white" fontSize="xl" as="u" textAlign="left">
                     <Link href="https://themetagame.xyz" target="_blank">
-                        Built by Metagame
+                        {copy.metagamePlug}
                     </Link>
-                </Box>
-            </Text>
+                </Text>
+
+                <HStack>
+                    {thankYouAssetSize !== 'Large' ? <CustomConnectButton isNavbar /> : null}
+                    <HStack>
+                        <Etherscan />
+                        <Opensea />
+                    </HStack>
+                </HStack>
+            </HStack>
             <Flex direction={['column', 'row']} w={['xs', 'sm', 'md', '5xl']} spacing={5} mt={20}>
                 <Flex direction="column" align="flex-start" w={['100%', '50%']} minW="50%">
                     <Flex width="100%" bgColor="rgba(0, 0, 0, 0)" boxShadow="md"></Flex>
@@ -291,26 +330,18 @@ const Home = ({ metadata }) => {
                     <Text fontSize="lg" align="left" mt={10}>
                         {copy.text2}
                     </Text>
-                    <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10}>
-                        {textAboveButton()}
-                    </Text>
-                    <HStack
+                    {textAboveButton()}
+                    <VStack
                         justifyContent={['center', 'start']}
-                        alignItems="center"
+                        alignItems="left"
                         spacing={4}
                         w="100%"
                         mt={10}>
-                        {!address ? <CustomConnectButton /> : null}
-                        {mintStatus !== MintStatus.unknown && (
+                        {!address || thankYouAssetSize === 'Large' ? <CustomConnectButton /> : null}
+                        {![MintStatus.unknown, MintStatus.error].includes(mintStatus) && (
                             <MintButton mintStatus={mintStatus} action={mintButtonAction} />
                         )}
-                        {thankYouAssetSize !== 'Large' ? (
-                            <>
-                                <Etherscan />
-                                <Opensea />
-                            </>
-                        ) : null}
-                    </HStack>
+                    </VStack>
                 </Flex>
 
                 {thankYouAssetSize !== 'Large' ? (
@@ -379,31 +410,15 @@ const Home = ({ metadata }) => {
                     <Text mt={4} textColor="brand.900" textAlign="left" fontSize={['lg', 'xl']}>
                         {copy.bottomSectionText}
                     </Text>
-                    <Box
-                        as="button"
-                        disabled={
-                            ![
-                                MintStatus.can_mint,
-                                MintStatus.processing,
-                                MintStatus.minted,
-                            ].includes(mintStatus)
-                        }
+                    <BigButton
                         onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
-                        type="button"
-                        bgColor="white"
-                        borderRadius={'xl'}
-                        borderColor="brand.800"
-                        borderWidth="1px"
-                        px={8}
-                        py={4}
                         mt={4}
+                        bgColor="white"
                         _hover={{
-                            background: '#e8e8e8',
-                        }}>
-                        <Heading as="p" size={'lg'} color="brand.800" fontWeight="400">
-                            {copy.metagameCta}
-                        </Heading>
-                    </Box>
+                            background: 'rgba(0, 0, 0, 0.1)',
+                        }}
+                        label={copy.metagameCta}
+                    />
                 </Box>
             </Box>
         </Box>
