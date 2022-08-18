@@ -33,6 +33,7 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
 
         logData.third_party_name = 'get whitehat data';
         let returnedEverything;
+        let whitelisted;
         let tokensReturned;
         try {
             const response = await axios.get(
@@ -40,6 +41,7 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
             );
             const { data } = response as AxiosResponse;
             returnedEverything = data.returnedEverything;
+            whitelisted = data.whitelisted;
             tokensReturned = data.tokensReturned;
         } catch (err) {
             logError(logData, err);
@@ -48,7 +50,13 @@ export async function addMetadata(minterAddress: string, tokenId: string): Promi
         }
 
         logData.third_party_name = 'formatNewMetadata';
-        let metadata = formatNewMetadata(address, userName, returnedEverything, tokensReturned);
+        let metadata = formatNewMetadata(
+            address,
+            userName,
+            returnedEverything,
+            tokensReturned,
+            whitelisted,
+        );
 
         logData.third_party_name = 'redis set metadata';
 

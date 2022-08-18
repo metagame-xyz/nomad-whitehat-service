@@ -90,7 +90,7 @@ export interface GenericAttribute {
 }
 
 export interface ReturnedEverythingAttribute {
-    value: 'Returned 100%';
+    value: 'Returned 100%' | 'Manually approved by Nomad';
 }
 
 export type Attributes = (GenericAttribute | ReturnedEverythingAttribute)[];
@@ -123,11 +123,15 @@ export const formatNewMetadata = (
     userName: string,
     returnedEverything: boolean,
     tokensReturned: TokensReturned,
+    whitelisted: boolean,
 ): Metadata => {
     const attributes: Attributes = [];
-    if (returnedEverything) {
+    if (whitelisted) {
+        attributes.push({ value: 'Manually approved by Nomad' });
+    } else if (returnedEverything) {
         attributes.push({ value: 'Returned 100%' });
     }
+
     Object.entries(tokensReturned).forEach(([symbol, amount]) => {
         attributes.push({
             trait_type: `${symbol} returned`,
