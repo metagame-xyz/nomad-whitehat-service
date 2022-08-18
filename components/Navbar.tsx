@@ -37,7 +37,7 @@ function Navbar(props) {
                 {...props}>
                 <HStack align="center" spacing={2} pr={[0, 2]}>
                     {showName && (
-                        <Text color="white" fontSize="xl" as="u">
+                        <Text color="white" fontSize="xl" as="u" outline="none">
                             <Link href="https://themetagame.xyz" target="_blank">
                                 Built by Metagame
                             </Link>
