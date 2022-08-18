@@ -234,19 +234,14 @@ const Home = ({ metadata }) => {
                     Looks like you either didn&apos;t participate in the Nomad bridge event, or
                     haven&apos;t returned enough funds to qualify for the White Hat. If you think
                     this message is in error, please contact{' '}
-                    <Link as="u" href="mailto:recovery@nomad.xyz">
-                        recovery@nomad.xyz
-                    </Link>
-                    .
+                    <Link href="mailto:recovery@nomad.xyz">recovery@nomad.xyz</Link>.
                 </Text>
             );
         } else if (mintStatus === MintStatus.error) {
             return (
                 <Text fontSize="lg" align="left" fontWeight={'bold'} mt={10} color={'red'}>
                     Oops! Looks like something went wrong on our end. Try reloading the page or{' '}
-                    <Link
-                        as="u"
-                        href="https://twitter.com/messages/compose?recipient_id=1453867148514926600">
+                    <Link href="https://twitter.com/messages/compose?recipient_id=1453867148514926600">
                         contact us
                     </Link>
                     .
