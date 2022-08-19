@@ -85,7 +85,6 @@ const Home = ({ metadata }) => {
         isDisconnected,
     } = useAccount({ onDisconnect: datadogRum.removeUser });
     const { chain } = useNetwork();
-
     const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
     let [mintCount, setMintCount] = useState<number>(null);
@@ -106,6 +105,13 @@ const Home = ({ metadata }) => {
     const [showMintedModal, setShowMintedModal] = useState(false);
 
     let [hasGPU, setHasGPU] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (address) {
+            // @erin do your thing here
+            // this will fire whenever the address changes
+        }
+    }, [address]);
 
     useEffect(() => {
         async function getUserMintedTokenId() {
