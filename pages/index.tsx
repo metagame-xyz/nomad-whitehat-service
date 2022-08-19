@@ -78,12 +78,7 @@ const toastErrorData = (title: string, description: string) => ({
 });
 
 const Home = ({ metadata }) => {
-    const { userName, eventParams, openWeb3Modal, toast } = useEthereum();
-    const {
-        address: uncleanAddress,
-        isConnecting,
-        isDisconnected,
-    } = useAccount({ onDisconnect: datadogRum.removeUser });
+    const { address: uncleanAddress } = useAccount({ onDisconnect: datadogRum.removeUser });
     const { chain } = useNetwork();
     const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 

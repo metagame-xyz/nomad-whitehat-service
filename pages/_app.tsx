@@ -25,7 +25,6 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
     if (hideNav) {
         return <Component {...pageProps} />;
     } else {
-        const EthereumProvider = dynamic(() => import('../providers/EthereumProvider'));
         const Layout = dynamic(() => import('@components/Layout'));
 
         return (
@@ -37,30 +36,28 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
                             accentColor: '#FDFFFF',
                             accentColorForeground: '#151515',
                         })}>
-                        <EthereumProvider>
+                        <Flex
+                            // backgroundImage={leftBg.src}
+                            // bgBlendMode="overlay"
+                            // bgPosition={'left 0px top -70px'}
+                            // bgSize={bgSize}
+                            width="100%"
+                            // bgRepeat="no-repeat repeat"
+                        >
                             <Flex
-                                // backgroundImage={leftBg.src}
-                                // bgBlendMode="overlay"
-                                // bgPosition={'left 0px top -70px'}
-                                // bgSize={bgSize}
+                                // backgroundImage={rightBg.src}
                                 width="100%"
+                                // bgPosition={'right 0px top -70px'}
+                                // bgSize={bgSize}
                                 // bgRepeat="no-repeat repeat"
                             >
-                                <Flex
-                                    // backgroundImage={rightBg.src}
-                                    width="100%"
-                                    // bgPosition={'right 0px top -70px'}
-                                    // bgSize={bgSize}
-                                    // bgRepeat="no-repeat repeat"
-                                >
-                                    <Flex bgColor="brand.800" width="100%">
-                                        <Layout>
-                                            <Component {...pageProps} />
-                                        </Layout>
-                                    </Flex>
+                                <Flex bgColor="brand.800" width="100%">
+                                    <Layout>
+                                        <Component {...pageProps} />
+                                    </Layout>
                                 </Flex>
                             </Flex>
-                        </EthereumProvider>
+                        </Flex>
                     </RainbowKitProvider>
                 </WagmiConfig>
             </ChakraProvider>
