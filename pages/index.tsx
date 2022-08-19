@@ -392,7 +392,12 @@ const Home = ({ metadata }) => {
                 />
                 <Box
                     as="button"
-                    onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
+                    onClick={() =>
+                        window.open(
+                            'https://www.coinvise.co/claim/30dba901-9816-4eb0-b0a3-f87fddfafd3c',
+                            '_blank',
+                        )
+                    }
                     type="button"
                     borderRadius={'xl'}
                     borderColor="white"
