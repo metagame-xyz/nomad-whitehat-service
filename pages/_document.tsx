@@ -29,15 +29,6 @@ class MyDocument extends Document {
                     <meta name="twitter:image:alt" content={meta.title} />
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content="@metagame" />
-                    <script
-                        async
-                        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
-                    />
-                    <script
-                        dangerouslySetInnerHTML={{
-                            __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${GOOGLE_ANALYTICS_ID}', {page_path: window.location.pathname,});`,
-                        }}
-                    />
                 </Head>
                 <body>
                     <Main />
