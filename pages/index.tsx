@@ -1,36 +1,27 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
     Box,
-    Button,
     Flex,
     Heading,
     HStack,
     Image,
     Link,
-    SimpleGrid,
     Text,
-    useBreakpointValue,
     VStack,
 } from '@chakra-ui/react';
 import { datadogRum } from '@datadog/browser-rum';
-import { parseEther } from '@ethersproject/units';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import axios from 'axios';
-import { getGPUTier } from 'detect-gpu';
-import { BigNumber, Contract, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { AddressZ } from 'evm-translator/lib/interfaces/utils';
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import nomadWhitehatAbi from 'utils/nomadWhitehatAbi';
-import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagmi';
-import analytics from 'segment'
-
-import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import Analytics from 'analytics';
+import segmentPlugin from '@analytics/segment';
 
 import BigButton from '@components/BigButton';
 import CustomConnectButton from '@components/ConnectButton';
 import { Etherscan, Opensea, TwelveCircles } from '@components/Icons';
-import { maxW } from '@components/Layout';
 import MintButton, { MintStatus } from '@components/MintButton';
 
 import { ioredisClient } from '@utils';
@@ -39,15 +30,20 @@ import {
     CONTRACT_ADDRESS,
     METABOT_BASE_API_URL,
     NETWORK,
-    networkStrings,
-    WEBSITE_URL,
 } from '@utils/constants';
 import { copy } from '@utils/content';
-import useWindowDimensions, { debug, event } from '@utils/frontend';
-import { Metadata } from '@utils/metadata';
-import { getParametersFromTxnCounts } from '@utils/parameters';
+import useWindowDimensions from '@utils/frontend';
+import { SEGMENT_KEY } from '@utils/constants';
 
-import heartbeat from '../heartbeat.json';
+
+export const analytics = Analytics({
+    app: 'awesome-app',
+    plugins: [
+        segmentPlugin({
+            writeKey: SEGMENT_KEY
+        })
+    ]
+})
 
 export const getServerSideProps = async () => {
     const metadata = await ioredisClient.hget('2', 'metadata');

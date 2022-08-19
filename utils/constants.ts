@@ -34,6 +34,7 @@ export const NETWORK = process.env.NEXT_PUBLIC_NETWORK.toLowerCase();
 export const INFURA_PROJECT_ID = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
 export const ALCHEMY_PROJECT_ID = process.env.NEXT_PUBLIC_ALCHEMY_PROJECT_ID;
 export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+export const SEGMENT_KEY = process.env.NEXT_PUBLIC_SEGMENT_KEY;
 // heartbeat.loca.lt, dev.heartbeat.art, heartbeat.art
 export const WEBSITE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 export const networkStrings = getNetworkString(NETWORK);
