@@ -22,7 +22,7 @@ export const copy = {
     nameLowercase: 'nomad whitehat',
     metagamePlug: 'Powered by Metagame',
     heading1: 'Whitehat Prize',
-    text1: `This Whitehat NFT, using Metagame's open-source evm-translator, is only mintable by addresses that whitehatted the Nomad Bridge by returning 90%+ of the funds they took from the bridge.`,
+    text1: `Reputation and contribution are the lifeblood of a sustainable crypto revolution. This Whitehat NFT, using Metagame's open-source evm-translator, is only mintable by addresses that whitehatted the Nomad Bridge Hack by returning 90%+ of the total funds they took from the bridge.`,
     text2: `We support people doing the right thing even if it's for the wrong reason. More of the right things happen, and just maybe, more people will start doing the right thing for the right reasons, too.`,
     forefront: 'EVERY WHITEHAT CAN CLAIM 100 $FF FROM',
     forefrontCta: 'Claim',
