@@ -1,5 +1,5 @@
 {
-    "name": "token-garden-service",
+    "name": "nomad-whitehat-service",
     "version": "1.0.0",
     "private": false,
     "license": "GPL-3.0-or-later",
