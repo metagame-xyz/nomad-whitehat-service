@@ -437,7 +437,9 @@ const Home = ({ metadata }) => {
                         {copy.bottomSectionText2}
                     </Text>
                     <BigButton
-                        onClick={() => window.open('https://twitter.com/Metagame', '_blank')}
+                        onClick={() =>
+                            window.open('https://www.theMetagame.xyz?ref=nomad', '_blank')
+                        }
                         mt={[8, 8, 8, 12]}
                         bgColor="white"
                         _hover={{
