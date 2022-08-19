@@ -23,7 +23,7 @@ export const copy = {
     metagamePlug: 'Powered by Metagame',
     heading1: 'Whitehat Prize',
     text1: `Reputation and contribution are the lifeblood of a sustainable crypto revolution. This Whitehat NFT, using Metagame's open-source evm-translator, is only mintable by addresses that whitehatted the Nomad Bridge Hack by returning 90%+ of the total funds they took from the bridge.`,
-    text2: `We support people doing the right thing even if it's for the wrong reason. More of the right things happen, and just maybe, more people will start doing the right thing for the right reasons, too.`,
+    text2: `We support people doing the right thing even if it's for the wrong reason, and we hope that things like this will encourage more people to do the right thing. Claim an NFT to celebrate your white hat status!`,
     forefront: 'EVERY WHITEHAT CAN CLAIM 100 $FF FROM',
     forefrontCta: 'Claim',
     bottomSectonHeading: 'EARNED NFTS ARE THE FUTURE',
