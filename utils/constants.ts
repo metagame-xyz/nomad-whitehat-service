@@ -69,7 +69,17 @@ function getNetworkString(network: string): NetworkStrings {
                 openseaAPI: 'api.',
                 web3Modal: 'mainnet',
             };
-
+        case 'homestead':
+            return {
+                alchemy: 'eth-mainnet.',
+                ethers: 'homestead',
+                etherscan: '',
+                etherscanAPI: 'api.',
+                polygonscanAPI: 'api.',
+                opensea: '',
+                openseaAPI: 'api.',
+                web3Modal: 'mainnet',
+            };
         default:
             return {
                 alchemy: `eth-${network}.`,
