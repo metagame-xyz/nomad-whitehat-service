@@ -23,6 +23,7 @@ import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import nomadWhitehatAbi from 'utils/nomadWhitehatAbi';
 import { useAccount, useEnsName, useNetwork, useProvider, useSigner } from 'wagmi';
+import analytics from 'segment'
 
 import { useEthereum, wrongNetworkToast } from '@providers/EthereumProvider';
 
@@ -83,7 +84,6 @@ const Home = ({ metadata }) => {
     const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
     let [mintCount, setMintCount] = useState<number>(null);
-    console.log(analytics);
 
     const provider = useProvider();
 
@@ -104,8 +104,7 @@ const Home = ({ metadata }) => {
 
     useEffect(() => {
         if (address) {
-            // @erin do your thing here
-            // this will fire whenever the address changes
+            analytics.identify(address);
         }
     }, [address]);
 
@@ -204,6 +203,8 @@ const Home = ({ metadata }) => {
             setUserTokenId(tokenId.toNumber());
             setMintStatus(MintStatus.minted);
             setShowMintedModal(true);
+
+            analytics.track('user minted');
         } catch (error) {
             console.error(error);
             setMintStatus(previousMintStatus);
@@ -260,6 +261,7 @@ const Home = ({ metadata }) => {
             break;
         case MintStatus.error:
             mintButtonAction = () => {};
+            analytics.track('not whitehat');
             break;
         case MintStatus.minted:
             mintButtonAction = () => {
