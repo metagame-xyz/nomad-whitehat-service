@@ -101,6 +101,7 @@ const Home = ({ metadata }) => {
     useEffect(() => {
         if (address) {
             analytics.identify(address);
+            analytics.track('connect wallet');
         }
     }, [address]);
 
