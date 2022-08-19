@@ -22,8 +22,6 @@ export const copy = {
     nameLowercase: 'nomad whitehat',
     metagamePlug: 'Powered by Metagame',
     heading1: 'Whitehat Prize',
-//     Reputation and contribution are the lifeblood of a sustainable crypto revolution. This Whitehat NFT, using Metagame's open-source evm-translator, is only mintable by whitehats of the Nomad Bridge Hack who returned at least 90% of funds.
-// We support people doing the right thing even if it's for the wrong reason, and we hope that things like this will encourage more people to do the right thing. Claim an NFT endorsed by Nomad to celebrate your white hat status!
     text1: `Reputation and contribution are the lifeblood of a sustainable crypto revolution. This Whitehat NFT, using Metagame's open-source evm-translator, is only mintable by whitehats of the Nomad Bridge Hack who returned at least 90% of funds.`,
     text2: `We support people doing the right thing even if it's for the wrong reason, and we hope that things like this will encourage more people to do the right thing. Claim now to celebrate your white hat status!`,
     forefront: 'EVERY WHITEHAT CAN CLAIM 100 $FF FROM',
