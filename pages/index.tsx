@@ -83,6 +83,7 @@ const Home = ({ metadata }) => {
     const address = uncleanAddress ? AddressZ.parse(uncleanAddress) : uncleanAddress;
 
     let [mintCount, setMintCount] = useState<number>(null);
+    console.log(analytics);
 
     const provider = useProvider();
 
